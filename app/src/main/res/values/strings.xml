@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">MidburnGate</string>
+    <string name="app_name">Midburn Gate</string>
+    <string name="invitation_number">מספר הזמנה:</string>
+    <string name="ticket_number">מספר כרטיס:</string>
+    <string name="send">שלח</string>
+    <string name="manually_validate_dialog_title">חסר זיהוי</string>
+    <string name="manually_validate_dialog_message">עליך להכניס את מספר ההזמנה ואת מספר הכרטיס
+    </string>
+    <string name="ok">OK</string>
+    <string name="ticket_details">Ticket Details</string>
+    <string name="ticket_owner_name">שם בעל הכרטיס:</string>
+    <string name="ticket_type">סוג הכרטיס:</string>
+    <string name="entranc_date">תאריך כניסה:</string>
 </resources>
