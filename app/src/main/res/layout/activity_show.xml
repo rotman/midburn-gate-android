@@ -15,6 +15,17 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
+              android:text="@string/event_id"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:id="@+id/eventIdTextView_ShowActivity"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
               android:text="@string/invitation_number"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -59,12 +70,36 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:text="@string/entranc_date"
+              android:text="@string/entrance_date"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <TextView android:id="@+id/entranceDateTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+
+        <Button android:id="@+id/exitButton_ShowActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="exit"
+                android:background="@android:color/holo_red_light"
+                android:text="@string/exit"/>
+
+        <Button android:id="@+id/entranceButton_ShowActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="entrance"
+                android:background="@android:color/holo_green_light"
+                android:text="@string/entrance"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>
