@@ -40,7 +40,7 @@ public class ShowActivity
 					                                   .addQueryParameter("action", "exit")
 					                                   .addQueryParameter("id", mTicketId)
 					                                   .build();
-					Log.d(MainActivity.TAG, "utl: " + url);
+					Log.d(MainActivity.TAG, "url: " + url);
 					Request request = new Request.Builder().url(url)
 					                                       .build();
 					Response response = MainApplication.getHttpClient()
@@ -71,7 +71,7 @@ public class ShowActivity
 					                                   .addQueryParameter("action", "enter")
 					                                   .addQueryParameter("id", mTicketId)
 					                                   .build();
-					Log.d(MainActivity.TAG, "utl: " + url);
+					Log.d(MainActivity.TAG, "url: " + url);
 					Request request = new Request.Builder().url(url)
 					                                       .build();
 					Response response = MainApplication.getHttpClient()

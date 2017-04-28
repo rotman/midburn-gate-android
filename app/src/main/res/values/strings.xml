@@ -13,4 +13,9 @@
     <string name="entranc_date">תאריך כניסה:</string>
     <string name="exit">יציאה</string>
     <string name="entrance">כניסה</string>
+    <string name="insert_event_id">Event</string>
+    <string name="event_id">הכנס מספר אירוע</string>
+    <string name="insert">הכנס</string>
+    <string name="validate_event_id">מספר אירוע ריק</string>
+    <string name="event_id_key">event_id</string>
 </resources>
