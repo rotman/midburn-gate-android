@@ -15,7 +15,7 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:text="@string/event_id"
+              android:text="@string/insert_event_id"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <EditText android:id="@+id/eventIdEditText_InsertEventActivity"

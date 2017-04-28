@@ -1,7 +1,9 @@
 package com.midburn.gate.midburngate;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ public class ShowActivity
 	private TextView ticketOwnerNameTextView;
 	private TextView ticketTypeTextView;
 	private TextView entranceDateTextView;
+	private TextView evetnIdTextView;
 	private Button   entranceButton;
 	private Button   exitButton;
 
@@ -101,13 +104,15 @@ public class ShowActivity
 
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
+			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
+			evetnIdTextView.setText(eventId);
 			invitationNumberTextView.setText(ticket.getInvitationNumber());
 			ticketNumberTextView.setText(ticket.getTicketNumber());
 			ticketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			ticketTypeTextView.setText(ticket.getTicketType());
 			entranceDateTextView.setText(ticket.getEntranceDate());
 		}
-
 	}
 
 	private void toggleButtonsState(boolean isInsideEvent) {
@@ -123,8 +128,6 @@ public class ShowActivity
 			exitButton.setAlpha(.5f);
 			entranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
 		}
-
-
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -146,5 +149,12 @@ public class ShowActivity
 		entranceDateTextView = (TextView) findViewById(R.id.entranceDateTextView_ShowActivity);
 		entranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
 		exitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
+		evetnIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent upIntent = new Intent(this, MainActivity.class);
+		NavUtils.navigateUpTo(this, upIntent);
 	}
 }

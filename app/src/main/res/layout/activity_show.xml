@@ -15,6 +15,17 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
+              android:text="@string/event_id"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:id="@+id/eventIdTextView_ShowActivity"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
               android:text="@string/invitation_number"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 

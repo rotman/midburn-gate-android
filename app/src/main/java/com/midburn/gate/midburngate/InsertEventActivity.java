@@ -62,7 +62,7 @@ public class InsertEventActivity
 			finish();
 		}
 
-		getSupportActionBar().setTitle(getString(R.string.insert_event_id));
+		getSupportActionBar().setTitle(getString(R.string.event));
 		bindViews();
 	}
 
