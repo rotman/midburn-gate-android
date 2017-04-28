@@ -59,6 +59,7 @@ public class MainActivity
 
 						HttpUrl url = new HttpUrl.Builder().scheme("https")
 						                                   .host(SERVER_URL)
+						                                   .addPathSegment("gate")
 						                                   .addQueryParameter("action", "manual_entrance")
 						                                   .addQueryParameter("order", invitationNumber)
 						                                   .addQueryParameter("ticket", ticketNumber)
@@ -125,6 +126,7 @@ public class MainActivity
 
 							HttpUrl url = new HttpUrl.Builder().scheme("https")
 							                                   .host(SERVER_URL)
+							                                   .addPathSegment("gate")
 							                                   .addQueryParameter("id", contents)
 							                                   .build();
 							Log.d(TAG, "url: " + url);

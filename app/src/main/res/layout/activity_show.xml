@@ -70,7 +70,7 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:text="@string/entranc_date"
+              android:text="@string/entrance_date"
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <TextView android:id="@+id/entranceDateTextView_ShowActivity"

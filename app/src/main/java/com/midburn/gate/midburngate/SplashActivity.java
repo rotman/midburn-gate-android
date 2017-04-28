@@ -19,6 +19,6 @@ public class SplashActivity
 				startActivity(intent);
 
 			}
-		}, 5000);
+		}, 3000);
 	}
 }

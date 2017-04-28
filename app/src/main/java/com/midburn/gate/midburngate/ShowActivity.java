@@ -29,7 +29,7 @@ public class ShowActivity
 	private TextView ticketOwnerNameTextView;
 	private TextView ticketTypeTextView;
 	private TextView entranceDateTextView;
-	private TextView evetnIdTextView;
+	private TextView eventIdTextView;
 	private Button   entranceButton;
 	private Button   exitButton;
 
@@ -40,8 +40,39 @@ public class ShowActivity
 				try {
 					HttpUrl url = new HttpUrl.Builder().scheme("https")
 					                                   .host(MainActivity.SERVER_URL)
-					                                   .addQueryParameter("action", "exit")
-					                                   .addQueryParameter("id", mTicketId)
+					                                   .addPathSegment("gate")
+					                                   .addPathSegment("event_in")
+					                                   .addPathSegment("id")
+					                                   .addPathSegment(mTicketId)
+					                                   .build();
+					Log.d(MainActivity.TAG, "url: " + url);
+					Request request = new Request.Builder().url(url)
+					                                       .build();
+					Response response = MainApplication.getHttpClient()
+					                                   .newCall(request)
+					                                   .execute();
+					handleServerResponse(response);
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public void entrance(View view) {
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+
+					HttpUrl url = new HttpUrl.Builder().scheme("https")
+					                                   .host(MainActivity.SERVER_URL)
+					                                   .addPathSegment("gate")
+					                                   .addPathSegment("event_in")
+					                                   .addPathSegment("id")
+//					                                   .addPathSegment(mTicketId)
 					                                   .build();
 					Log.d(MainActivity.TAG, "url: " + url);
 					Request request = new Request.Builder().url(url)
@@ -60,34 +91,17 @@ public class ShowActivity
 	}
 
 	private void handleServerResponse(Response response) {
+		if (response != null) {
+			MainActivity.playMusic(this, MainActivity.OK_MUSIC);
+			//TODO handle response
+			//TODO add audio playMusic();
 
-	}
-
-	public void entrance(View view) {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					HttpUrl url = new HttpUrl.Builder().scheme("https")
-					                                   .host(MainActivity.SERVER_URL)
-					                                   .addQueryParameter("action", "enter")
-					                                   .addQueryParameter("id", mTicketId)
-					                                   .build();
-					Log.d(MainActivity.TAG, "url: " + url);
-					Request request = new Request.Builder().url(url)
-					                                       .build();
-					Response response = MainApplication.getHttpClient()
-					                                   .newCall(request)
-					                                   .execute();
-					handleServerResponse(response);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		thread.start();
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+		}
+		else {
+			MainActivity.playMusic(this, MainActivity.ERROR_MUSIC);
+		}
 	}
 
 	@Override
@@ -98,7 +112,8 @@ public class ShowActivity
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		bindView();
 
-		boolean isInsideEvent = true;
+		//TODO get from server user status (is user inside/outside)
+		boolean isInsideEvent = false;
 		toggleButtonsState(isInsideEvent);
 		mTicketId = getIntent().getStringExtra("ticketId");
 
@@ -106,7 +121,7 @@ public class ShowActivity
 		if (ticket != null) {
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
-			evetnIdTextView.setText(eventId);
+			eventIdTextView.setText(eventId);
 			invitationNumberTextView.setText(ticket.getInvitationNumber());
 			ticketNumberTextView.setText(ticket.getTicketNumber());
 			ticketOwnerNameTextView.setText(ticket.getTicketOwnerName());
@@ -149,7 +164,7 @@ public class ShowActivity
 		entranceDateTextView = (TextView) findViewById(R.id.entranceDateTextView_ShowActivity);
 		entranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
 		exitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
-		evetnIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
+		eventIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
 	}
 
 	@Override
