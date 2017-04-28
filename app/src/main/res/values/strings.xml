@@ -11,4 +11,6 @@
     <string name="ticket_owner_name">שם בעל הכרטיס:</string>
     <string name="ticket_type">סוג הכרטיס:</string>
     <string name="entranc_date">תאריך כניסה:</string>
+    <string name="exit">יציאה</string>
+    <string name="entrance">כניסה</string>
 </resources>

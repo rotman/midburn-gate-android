@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,13 +15,24 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import java.io.IOException;
+
+import okhttp3.HttpUrl;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity
 		extends AppCompatActivity {
 
+	public static final String TAG = "MIDBURN_GATE";
+	public static final String SERVER_URL = "www.google.com";
+
 	private static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
-	private static final String TAG         = "MIDBURN_GATE";
+
+	//audio
+	private static final int OK_MUSIC    = 1;
+	private static final int ERROR_MUSIC = 2;
 
 	private EditText invitationNumberEditText;
 	private EditText TicketNumberEditText;
@@ -29,45 +41,104 @@ public class MainActivity
 	private DialogInterface.OnClickListener mBackPressedClickListener;
 
 	public void manuallyInput(View view) {
-		String invitationNumber = invitationNumberEditText.getText()
-		                                                  .toString();
-		String ticketNumber = TicketNumberEditText.getText()
-		                                          .toString();
+		final String invitationNumber = invitationNumberEditText.getText()
+		                                                        .toString();
+		final String ticketNumber = TicketNumberEditText.getText()
+		                                                .toString();
 		if (TextUtils.isEmpty(invitationNumber) || TextUtils.isEmpty(ticketNumber)) {
+			playMusic(ERROR_MUSIC);
 			createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.manually_validate_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
 		else {
-			//TODO call server
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+
+						HttpUrl url = new HttpUrl.Builder().scheme("https")
+						                                   .host(SERVER_URL)
+						                                   .addQueryParameter("action", "manual_entrance")
+						                                   .addQueryParameter("order", invitationNumber)
+						                                   .addQueryParameter("ticket", ticketNumber)
+						                                   .build();
+						Log.d(TAG, "utl: " + url);
+						Request request = new Request.Builder().url(url)
+						                                       .build();
+						Response response = MainApplication.getHttpClient()
+						                                   .newCall(request)
+						                                   .execute();
+						handleServerResponse(response);
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			thread.start();
 		}
 	}
 
-	public void scanBarcode(View view) {
-		try {
-			//start the scanning activity from the com.google.zxing.client.android.SCAN intent
-			Intent intent = new Intent(ACTION_SCAN);
-			intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
-			startActivityForResult(intent, 0);
-		} catch (ActivityNotFoundException anfe) {
-			//on catch, show the download dialog
-			createAndShowDialog(this, "סורק לא נמצא", "להוריד אפליקציית סורק?", "כן", "לא", mNeedToDownloadScannerAppClickListener, android.R.drawable.ic_dialog_alert);
+	private void handleServerResponse(Response response) {
+		if (response != null) {
+			//TODO handle response
+			//TODO add audio playMusic();
+		}
+		else {
+			playMusic(ERROR_MUSIC);
 		}
 
-		//		Intent intent = new Intent(this, ShowActivity.class);
-		//		String date = String.valueOf(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()));
-		//		//for now using mock ticket
-		//		Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
-		//		intent.putExtra("ticketDetails", ticket);
-		//		startActivity(intent);
+	}
+
+	public void scanBarcode(View view) {
+//		try {
+//			//start the scanning activity from the com.google.zxing.client.android.SCAN intent
+//			Intent intent = new Intent(ACTION_SCAN);
+//			intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+//			startActivityForResult(intent, 0);
+//		} catch (ActivityNotFoundException anfe) {
+//			//on catch, show the download dialog
+//			playMusic(ERROR_MUSIC);
+//			createAndShowDialog(this, "סורק לא נמצא", "להוריד אפליקציית סורק?", "כן", "לא", mNeedToDownloadScannerAppClickListener, android.R.drawable.ic_dialog_alert);
+//		}
+
+				Intent intent = new Intent(this, ShowActivity.class);
+				String date = String.valueOf(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()));
+				//for now using mock ticket
+				Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
+				intent.putExtra("ticketDetails", ticket);
+				startActivity(intent);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
-				String contents = intent.getStringExtra("SCAN_RESULT");
+				final String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-				Toast toast = Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG);
-				toast.show();
-				//TODO call server
+				Log.d(TAG, "contents: " + contents + " | format: " + format);
+				Thread thread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+
+							HttpUrl url = new HttpUrl.Builder().scheme("https")
+							                                   .host(SERVER_URL)
+							                                   .addQueryParameter("id", contents)
+							                                   .build();
+							Log.d(TAG, "utl: " + url);
+							Request request = new Request.Builder().url(url)
+							                                       .build();
+							Response response = MainApplication.getHttpClient()
+							                                   .newCall(request)
+							                                   .execute();
+
+							handleServerResponse(response);
+
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				thread.start();
 			}
 		}
 	}
@@ -129,5 +200,18 @@ public class MainActivity
 	@Override
 	public void onBackPressed() {
 		createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
+	}
+
+	private void playMusic(int which) {
+		switch (which) {
+			case OK_MUSIC:
+				MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.ok);
+				mediaPlayer.start();
+				break;
+			case ERROR_MUSIC:
+				mediaPlayer = MediaPlayer.create(this, R.raw.error);
+				mediaPlayer.start();
+				break;
+		}
 	}
 }
