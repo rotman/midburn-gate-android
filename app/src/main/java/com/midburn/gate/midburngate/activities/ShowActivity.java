@@ -1,4 +1,4 @@
-package com.midburn.gate.midburngate;
+package com.midburn.gate.midburngate.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.midburn.gate.midburngate.R;
+import com.midburn.gate.midburngate.application.MainApplication;
+import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.model.Ticket;
+import com.midburn.gate.midburngate.utils.AppUtils;
 
 import java.io.IOException;
 
@@ -39,13 +45,13 @@ public class ShowActivity
 			public void run() {
 				try {
 					HttpUrl url = new HttpUrl.Builder().scheme("https")
-					                                   .host(MainActivity.SERVER_URL)
+					                                   .host(AppConsts.SERVER_URL)
 					                                   .addPathSegment("gate")
 					                                   .addPathSegment("event_in")
 					                                   .addPathSegment("id")
 					                                   .addPathSegment(mTicketId)
 					                                   .build();
-					Log.d(MainActivity.TAG, "url: " + url);
+					Log.d(AppConsts.TAG, "url: " + url);
 					Request request = new Request.Builder().url(url)
 					                                       .build();
 					Response response = MainApplication.getHttpClient()
@@ -68,13 +74,13 @@ public class ShowActivity
 				try {
 
 					HttpUrl url = new HttpUrl.Builder().scheme("https")
-					                                   .host(MainActivity.SERVER_URL)
+					                                   .host(AppConsts.SERVER_URL)
 					                                   .addPathSegment("gate")
 					                                   .addPathSegment("event_in")
 					                                   .addPathSegment("id")
-//					                                   .addPathSegment(mTicketId)
+					                                   //					                                   .addPathSegment(mTicketId)
 					                                   .build();
-					Log.d(MainActivity.TAG, "url: " + url);
+					Log.d(AppConsts.TAG, "url: " + url);
 					Request request = new Request.Builder().url(url)
 					                                       .build();
 					Response response = MainApplication.getHttpClient()
@@ -92,7 +98,7 @@ public class ShowActivity
 
 	private void handleServerResponse(Response response) {
 		if (response != null) {
-			MainActivity.playMusic(this, MainActivity.OK_MUSIC);
+			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
 			//TODO handle response
 			//TODO add audio playMusic();
 
@@ -100,7 +106,7 @@ public class ShowActivity
 			startActivity(intent);
 		}
 		else {
-			MainActivity.playMusic(this, MainActivity.ERROR_MUSIC);
+			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
 		}
 	}
 

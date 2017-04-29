@@ -1,7 +1,6 @@
-package com.midburn.gate.midburngate;
+package com.midburn.gate.midburngate.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Ticket implements Serializable{
 	private String invitationNumber;

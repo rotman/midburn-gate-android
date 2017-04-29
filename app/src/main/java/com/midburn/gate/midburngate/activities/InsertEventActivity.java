@@ -1,4 +1,4 @@
-package com.midburn.gate.midburngate;
+package com.midburn.gate.midburngate.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +10,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import com.midburn.gate.midburngate.R;
+import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.utils.AppUtils;
 
 public class InsertEventActivity
 		extends AppCompatActivity {
@@ -24,7 +28,7 @@ public class InsertEventActivity
 			//TODO check event id validation
 
 			//save event id in shared prefs
-			Log.d(MainActivity.TAG, "inserted event_id: " + eventId);
+			Log.d(AppConsts.TAG, "inserted event_id: " + eventId);
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = sharedPref.edit();
 			editor.putString(getString(R.string.event_id_key), eventId);
@@ -35,8 +39,8 @@ public class InsertEventActivity
 			finish();
 		}
 		else {
-			MainActivity.playMusic(this, MainActivity.ERROR_MUSIC);
-			MainActivity.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_event_id), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
+			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_event_id), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
 	}
 
@@ -55,7 +59,7 @@ public class InsertEventActivity
 		//read event_id value from shared prefs
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
-		Log.d(MainActivity.TAG, "eventId: " + eventId);
+		Log.d(AppConsts.TAG, "eventId: " + eventId);
 		if (!TextUtils.isEmpty(eventId)) {
 			Intent intent = new Intent(this, MainActivity.class);
 			startActivity(intent);
@@ -72,6 +76,6 @@ public class InsertEventActivity
 
 	@Override
 	public void onBackPressed() {
-		MainActivity.createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
+		AppUtils.createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
 	}
 }

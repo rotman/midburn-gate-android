@@ -1,9 +1,11 @@
-package com.midburn.gate.midburngate;
+package com.midburn.gate.midburngate.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+
+import com.midburn.gate.midburngate.R;
 
 public class SplashActivity
 		extends AppCompatActivity {

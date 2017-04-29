@@ -1,4 +1,4 @@
-package com.midburn.gate.midburngate;
+package com.midburn.gate.midburngate.application;
 
 import android.app.Application;
 
