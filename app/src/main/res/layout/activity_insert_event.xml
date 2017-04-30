@@ -30,4 +30,11 @@
             android:onClick="eventIdInserted"
             android:text="@string/insert"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar_InsertEventActivity"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
 </LinearLayout>

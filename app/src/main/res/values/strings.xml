@@ -19,4 +19,6 @@
     <string name="validate_event_id">מספר אירוע ריק</string>
     <string name="event_id_key">event_id</string>
     <string name="event">Event</string>
+    <string name="no_network_dialog_title">אין חיבור לאינטרנט</string>
+    <string name="no_network_dialog_message">וודא שיש חיבור לאינטרנט ונסה שוב</string>
 </resources>

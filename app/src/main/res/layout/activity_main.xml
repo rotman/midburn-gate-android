@@ -48,5 +48,11 @@
             android:layout_gravity="center"
             android:onClick="manuallyInput"
             android:text="@string/send"/>
+    <ProgressBar
+        android:id="@+id/progressBar_MainActivity"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -10,22 +10,37 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
+import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.utils.AppUtils;
 
+import okhttp3.Response;
+
 public class InsertEventActivity
 		extends AppCompatActivity {
 
-	private EditText                        eventIdEditText;
+	private EditText    eventIdEditText;
+	private ProgressBar mProgressBar;
+
 	private DialogInterface.OnClickListener mBackPressedClickListener;
+
+	private HttpRequestListener mHttpRequestListener;
 
 	public void eventIdInserted(View view) {
 		String eventId = eventIdEditText.getText()
 		                                .toString();
 		if (!TextUtils.isEmpty(eventId)) {
+			boolean hasInternetConnection = AppUtils.isConnected(this);
+			if (!hasInternetConnection) {
+				AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+				return;
+			}
 			//TODO check event id validation
+			//			mProgressBar.setVisibility(View.VISIBLE);
+
 
 			//save event id in shared prefs
 			Log.d(AppConsts.TAG, "inserted event_id: " + eventId);
@@ -56,6 +71,19 @@ public class InsertEventActivity
 			}
 		};
 
+		mHttpRequestListener = new HttpRequestListener() {
+			@Override
+			public void onResponse(Response response) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mProgressBar.setVisibility(View.GONE);
+					}
+				});
+				handleServerResponse(response);
+			}
+		};
+
 		//read event_id value from shared prefs
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
@@ -70,8 +98,23 @@ public class InsertEventActivity
 		bindViews();
 	}
 
+	private void handleServerResponse(Response response) {
+		if (response != null) {
+			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
+			//TODO handle response
+			//TODO add audio playMusic();
+
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+		}
+		else {
+			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
+		}
+	}
+
 	private void bindViews() {
 		eventIdEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
+		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_InsertEventActivity);
 	}
 
 	@Override

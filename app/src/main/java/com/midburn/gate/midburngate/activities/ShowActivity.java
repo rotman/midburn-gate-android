@@ -7,22 +7,19 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
-import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
 
-import java.io.IOException;
-
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class ShowActivity
@@ -30,73 +27,47 @@ public class ShowActivity
 
 	private String mTicketId;
 
-	private TextView invitationNumberTextView;
-	private TextView ticketNumberTextView;
-	private TextView ticketOwnerNameTextView;
-	private TextView ticketTypeTextView;
-	private TextView entranceDateTextView;
-	private TextView eventIdTextView;
-	private Button   entranceButton;
-	private Button   exitButton;
+	private TextView    invitationNumberTextView;
+	private TextView    ticketNumberTextView;
+	private TextView    ticketOwnerNameTextView;
+	private TextView    ticketTypeTextView;
+	private TextView    entranceDateTextView;
+	private TextView    eventIdTextView;
+	private Button      entranceButton;
+	private Button      exitButton;
+	private ProgressBar mProgressBar;
+
+
+	private HttpRequestListener mHttpRequestListener;
 
 	public void exit(View view) {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					HttpUrl url = new HttpUrl.Builder().scheme("https")
-					                                   .host(AppConsts.SERVER_URL)
-					                                   .addPathSegment("gate")
-					                                   .addPathSegment("event_in")
-					                                   .addPathSegment("id")
-					                                   .addPathSegment(mTicketId)
-					                                   .build();
-					Log.d(AppConsts.TAG, "url: " + url);
-					Request request = new Request.Builder().url(url)
-					                                       .build();
-					Response response = MainApplication.getHttpClient()
-					                                   .newCall(request)
-					                                   .execute();
-					handleServerResponse(response);
+		mProgressBar.setVisibility(View.VISIBLE);
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
+		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("gate")
+		                                   .addPathSegment("event_in")
+		                                   .addPathSegment("id")
+		                                   .addPathSegment(mTicketId)
+		                                   .build();
 
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		thread.start();
+		AppUtils.doHttpRequest(url, mHttpRequestListener);
 	}
 
 	public void entrance(View view) {
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
+		mProgressBar.setVisibility(View.VISIBLE);
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
+		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("gate")
+		                                   .addPathSegment("event_in")
+		                                   .addPathSegment("id")
+		                                   //					                                   .addPathSegment(mTicketId)
+		                                   .build();
 
-					HttpUrl url = new HttpUrl.Builder().scheme("https")
-					                                   .host(AppConsts.SERVER_URL)
-					                                   .addPathSegment("gate")
-					                                   .addPathSegment("event_in")
-					                                   .addPathSegment("id")
-					                                   //					                                   .addPathSegment(mTicketId)
-					                                   .build();
-					Log.d(AppConsts.TAG, "url: " + url);
-					Request request = new Request.Builder().url(url)
-					                                       .build();
-					Response response = MainApplication.getHttpClient()
-					                                   .newCall(request)
-					                                   .execute();
-					handleServerResponse(response);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		thread.start();
+		AppUtils.doHttpRequest(url, mHttpRequestListener);
 	}
 
 	private void handleServerResponse(Response response) {
+
 		if (response != null) {
 			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
 			//TODO handle response
@@ -117,6 +88,19 @@ public class ShowActivity
 		getSupportActionBar().setTitle(getString(R.string.ticket_details));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		bindView();
+
+		mHttpRequestListener = new HttpRequestListener() {
+			@Override
+			public void onResponse(Response response) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mProgressBar.setVisibility(View.GONE);
+					}
+				});
+				handleServerResponse(response);
+			}
+		};
 
 		//TODO get from server user status (is user inside/outside)
 		boolean isInsideEvent = false;
@@ -171,6 +155,8 @@ public class ShowActivity
 		entranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
 		exitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
 		eventIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
+		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
+
 	}
 
 	@Override

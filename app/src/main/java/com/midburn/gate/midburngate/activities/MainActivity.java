@@ -13,68 +13,60 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
+import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
-import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
 
-import java.io.IOException;
-
 import okhttp3.HttpUrl;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity
 		extends AppCompatActivity {
 
-	private EditText invitationNumberEditText;
-	private EditText TicketNumberEditText;
+	private EditText    mInvitationNumberEditText;
+	private EditText    mTicketNumberEditText;
+	private ProgressBar mProgressBar;
 
 	private DialogInterface.OnClickListener mNeedToDownloadScannerAppClickListener;
 	private DialogInterface.OnClickListener mBackPressedClickListener;
 
+	private HttpRequestListener mHttpRequestListener;
+
+
 	public void manuallyInput(View view) {
-		final String invitationNumber = invitationNumberEditText.getText()
-		                                                        .toString();
-		final String ticketNumber = TicketNumberEditText.getText()
-		                                                .toString();
+		final String invitationNumber = mInvitationNumberEditText.getText()
+		                                                         .toString();
+		final String ticketNumber = mTicketNumberEditText.getText()
+		                                                 .toString();
 		if (TextUtils.isEmpty(invitationNumber) || TextUtils.isEmpty(ticketNumber)) {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
 			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.manually_validate_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
 		}
-		else {
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-
-						HttpUrl url = new HttpUrl.Builder().scheme("https")
-						                                   .host(AppConsts.SERVER_URL)
-						                                   .addPathSegment("gate")
-						                                   .addQueryParameter("action", "manual_entrance")
-						                                   .addQueryParameter("order", invitationNumber)
-						                                   .addQueryParameter("ticket", ticketNumber)
-						                                   .build();
-						Log.d(AppConsts.TAG, "url: " + url);
-						Request request = new Request.Builder().url(url)
-						                                       .build();
-						Response response = MainApplication.getHttpClient()
-						                                   .newCall(request)
-						                                   .execute();
-						handleServerResponse(response);
-
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-			thread.start();
+		boolean hasInternetConnection = AppUtils.isConnected(this);
+		if (!hasInternetConnection) {
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
 		}
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
+		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("gate")
+		                                   .addQueryParameter("action", "manual_entrance")
+		                                   .addQueryParameter("order", invitationNumber)
+		                                   .addQueryParameter("ticket", ticketNumber)
+		                                   .build();
+
+		mProgressBar.setVisibility(View.VISIBLE);
+		AppUtils.doHttpRequest(url, mHttpRequestListener);
+
 	}
 
 	private void handleServerResponse(Response response) {
+
 		if (response != null) {
 			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
 			//TODO handle response
@@ -112,31 +104,15 @@ public class MainActivity
 				final String contents = intent.getStringExtra("SCAN_RESULT");
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				Log.d(AppConsts.TAG, "contents: " + contents + " | format: " + format);
-				Thread thread = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
 
-							HttpUrl url = new HttpUrl.Builder().scheme("https")
-							                                   .host(AppConsts.SERVER_URL)
-							                                   .addPathSegment("gate")
-							                                   .addQueryParameter("id", contents)
-							                                   .build();
-							Log.d(AppConsts.TAG, "url: " + url);
-							Request request = new Request.Builder().url(url)
-							                                       .build();
-							Response response = MainApplication.getHttpClient()
-							                                   .newCall(request)
-							                                   .execute();
+				HttpUrl url = new HttpUrl.Builder().scheme("https")
+				                                   .host(AppConsts.SERVER_URL)
+				                                   .addPathSegment("gate")
+				                                   .addQueryParameter("id", contents)
+				                                   .build();
 
-							handleServerResponse(response);
-
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-				thread.start();
+				mProgressBar.setVisibility(View.VISIBLE);
+				AppUtils.doHttpRequest(url, mHttpRequestListener);
 			}
 			else {
 				AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
@@ -180,6 +156,20 @@ public class MainActivity
 				startActivity(intent);
 			}
 		};
+
+		mHttpRequestListener = new HttpRequestListener() {
+			@Override
+			public void onResponse(Response response) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mProgressBar.setVisibility(View.GONE);
+					}
+				});
+				Log.d(AppConsts.TAG, "onResponse called");
+				handleServerResponse(response);
+			}
+		};
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -193,8 +183,9 @@ public class MainActivity
 	}
 
 	private void bindView() {
-		invitationNumberEditText = (EditText) findViewById(R.id.invitationNumberEditText_MainActivity);
-		TicketNumberEditText = (EditText) findViewById(R.id.ticketNumberEditText_MainActivity);
+		mInvitationNumberEditText = (EditText) findViewById(R.id.invitationNumberEditText_MainActivity);
+		mTicketNumberEditText = (EditText) findViewById(R.id.ticketNumberEditText_MainActivity);
+		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_MainActivity);
 	}
 
 
