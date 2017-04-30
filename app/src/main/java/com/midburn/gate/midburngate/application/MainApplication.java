@@ -7,15 +7,15 @@ import okhttp3.OkHttpClient;
 public class MainApplication
 		extends Application {
 
-	private static OkHttpClient httpClient;
+	private static OkHttpClient sHttpClient;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		httpClient = new OkHttpClient();
+		sHttpClient = new OkHttpClient();
 	}
 
 	public static OkHttpClient getHttpClient() {
-		return httpClient;
+		return sHttpClient;
 	}
 }

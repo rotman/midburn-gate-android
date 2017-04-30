@@ -27,20 +27,25 @@ public class ShowActivity
 
 	private String mTicketId;
 
-	private TextView    invitationNumberTextView;
-	private TextView    ticketNumberTextView;
-	private TextView    ticketOwnerNameTextView;
-	private TextView    ticketTypeTextView;
-	private TextView    entranceDateTextView;
-	private TextView    eventIdTextView;
-	private Button      entranceButton;
-	private Button      exitButton;
+	private TextView    mInvitationNumberTextView;
+	private TextView    mTicketNumberTextView;
+	private TextView    mTicketOwnerNameTextView;
+	private TextView    mTicketTypeTextView;
+	private TextView    mEntranceDateTextView;
+	private TextView    mEventIdTextView;
+	private Button      mEntranceButton;
+	private Button      mExitButton;
 	private ProgressBar mProgressBar;
 
 
 	private HttpRequestListener mHttpRequestListener;
 
 	public void exit(View view) {
+		boolean hasInternetConnection = AppUtils.isConnected(this);
+		if (!hasInternetConnection) {
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
 		mProgressBar.setVisibility(View.VISIBLE);
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
@@ -54,6 +59,11 @@ public class ShowActivity
 	}
 
 	public void entrance(View view) {
+		boolean hasInternetConnection = AppUtils.isConnected(this);
+		if (!hasInternetConnection) {
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
 		mProgressBar.setVisibility(View.VISIBLE);
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
@@ -111,27 +121,27 @@ public class ShowActivity
 		if (ticket != null) {
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
-			eventIdTextView.setText(eventId);
-			invitationNumberTextView.setText(ticket.getInvitationNumber());
-			ticketNumberTextView.setText(ticket.getTicketNumber());
-			ticketOwnerNameTextView.setText(ticket.getTicketOwnerName());
-			ticketTypeTextView.setText(ticket.getTicketType());
-			entranceDateTextView.setText(ticket.getEntranceDate());
+			mEventIdTextView.setText(eventId);
+			mInvitationNumberTextView.setText(ticket.getInvitationNumber());
+			mTicketNumberTextView.setText(ticket.getTicketNumber());
+			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
+			mTicketTypeTextView.setText(ticket.getTicketType());
+			mEntranceDateTextView.setText(ticket.getEntranceDate());
 		}
 	}
 
 	private void toggleButtonsState(boolean isInsideEvent) {
-		entranceButton.setEnabled(!isInsideEvent);
-		exitButton.setEnabled(isInsideEvent);
+		mEntranceButton.setEnabled(!isInsideEvent);
+		mExitButton.setEnabled(isInsideEvent);
 		if (isInsideEvent) {
-			entranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-			entranceButton.setAlpha(.5f);
-			exitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
+			mEntranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+			mEntranceButton.setAlpha(.5f);
+			mExitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
 		}
 		else {
-			exitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-			exitButton.setAlpha(.5f);
-			entranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
+			mExitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+			mExitButton.setAlpha(.5f);
+			mEntranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
 		}
 	}
 
@@ -147,14 +157,14 @@ public class ShowActivity
 	}
 
 	private void bindView() {
-		invitationNumberTextView = (TextView) findViewById(R.id.invitationNumberTextView_ShowActivity);
-		ticketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
-		ticketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
-		ticketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
-		entranceDateTextView = (TextView) findViewById(R.id.entranceDateTextView_ShowActivity);
-		entranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
-		exitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
-		eventIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
+		mInvitationNumberTextView = (TextView) findViewById(R.id.invitationNumberTextView_ShowActivity);
+		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
+		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
+		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
+		mEntranceDateTextView = (TextView) findViewById(R.id.entranceDateTextView_ShowActivity);
+		mEntranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
+		mExitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
+		mEventIdTextView = (TextView) findViewById(R.id.eventIdTextView_ShowActivity);
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
 
 	}

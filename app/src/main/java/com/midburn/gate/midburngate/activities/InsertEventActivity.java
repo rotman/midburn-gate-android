@@ -22,7 +22,7 @@ import okhttp3.Response;
 public class InsertEventActivity
 		extends AppCompatActivity {
 
-	private EditText    eventIdEditText;
+	private EditText    mEventIdEditText;
 	private ProgressBar mProgressBar;
 
 	private DialogInterface.OnClickListener mBackPressedClickListener;
@@ -30,19 +30,23 @@ public class InsertEventActivity
 	private HttpRequestListener mHttpRequestListener;
 
 	public void eventIdInserted(View view) {
-		String eventId = eventIdEditText.getText()
-		                                .toString();
-		if (!TextUtils.isEmpty(eventId)) {
-			boolean hasInternetConnection = AppUtils.isConnected(this);
-			if (!hasInternetConnection) {
-				AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-				return;
-			}
+		String eventId = mEventIdEditText.getText()
+		                                 .toString();
+		if (TextUtils.isEmpty(eventId)) {
+			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
+			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_event_id), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
+		boolean hasInternetConnection = AppUtils.isConnected(this);
+		if (!hasInternetConnection) {
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
+
 			//TODO check event id validation
 			//			mProgressBar.setVisibility(View.VISIBLE);
 
-
-			//save event id in shared prefs
+		//save event id in shared prefs
 			Log.d(AppConsts.TAG, "inserted event_id: " + eventId);
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = sharedPref.edit();
@@ -52,12 +56,8 @@ public class InsertEventActivity
 			Intent intent = new Intent(this, MainActivity.class);
 			startActivity(intent);
 			finish();
-		}
-		else {
-			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_event_id), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-		}
 	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,7 @@ public class InsertEventActivity
 	}
 
 	private void bindViews() {
-		eventIdEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
+		mEventIdEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_InsertEventActivity);
 	}
 

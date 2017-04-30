@@ -69,8 +69,15 @@ public class MainActivity
 
 		if (response != null) {
 			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
+
 			//TODO handle response
-			//TODO add audio playMusic();
+
+			Intent intent = new Intent(this, ShowActivity.class);
+			String date = String.valueOf(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()));
+			//for now using mock ticket
+			Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
+			intent.putExtra("ticketDetails", ticket);
+			startActivity(intent);
 		}
 		else {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
@@ -89,13 +96,6 @@ public class MainActivity
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
 			AppUtils.createAndShowDialog(this, "סורק לא נמצא", "להוריד אפליקציית סורק?", "כן", "לא", mNeedToDownloadScannerAppClickListener, android.R.drawable.ic_dialog_alert);
 		}
-
-				Intent intent = new Intent(this, ShowActivity.class);
-				String date = String.valueOf(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()));
-				//for now using mock ticket
-				Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
-				intent.putExtra("ticketDetails", ticket);
-				startActivity(intent);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -113,10 +113,6 @@ public class MainActivity
 
 				mProgressBar.setVisibility(View.VISIBLE);
 				AppUtils.doHttpRequest(url, mHttpRequestListener);
-			}
-			else {
-				AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-				AppUtils.createAndShowDialog(this, "הפעולה נכשלה", "נא נסה שוב או הזן פרטים ידנית", getString(R.string.ok), "", null, android.R.drawable.ic_dialog_alert);
 			}
 		}
 	}
