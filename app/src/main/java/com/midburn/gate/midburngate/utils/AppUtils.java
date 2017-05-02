@@ -17,10 +17,14 @@ import com.midburn.gate.midburngate.consts.AppConsts;
 import java.io.IOException;
 
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AppUtils {
+
+	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 	public static void createAndShowDialog(final Context context, String title, String message, @Nullable String positiveButtonText, @Nullable String negativeButtonText, @Nullable DialogInterface.OnClickListener onClickListener, int iconId) {
 		new AlertDialog.Builder(context).setTitle(title)
@@ -50,7 +54,7 @@ public class AppUtils {
 		return netInfo != null && netInfo.isConnected();
 	}
 
-	public static void doHttpRequest(final HttpUrl url, final HttpRequestListener httpRequestListener) {
+	public static void doGETHttpRequest(final HttpUrl url, final HttpRequestListener httpRequestListener) {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -63,7 +67,31 @@ public class AppUtils {
 					                                   .execute();
 					httpRequestListener.onResponse(response);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.e(AppConsts.TAG, e.getMessage());
+					httpRequestListener.onResponse(null);
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public static void doPOSTHttpRequest(final HttpUrl url, final String requestBodyJson, final HttpRequestListener httpRequestListener) {
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RequestBody body = RequestBody.create(JSON, requestBodyJson);
+				Request request = new Request.Builder().url(url)
+				                                       .post(body)
+				                                       .build();
+				try {
+					Response response = MainApplication.getHttpClient()
+					                                   .newCall(request)
+					                                   .execute();
+
+					httpRequestListener.onResponse(response);
+				} catch (IOException e) {
+					Log.e(AppConsts.TAG, e.getMessage());
+					httpRequestListener.onResponse(null);
 				}
 			}
 		});

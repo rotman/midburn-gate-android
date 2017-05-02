@@ -55,7 +55,7 @@ public class ShowActivity
 		                                   .addPathSegment(mTicketId)
 		                                   .build();
 
-		AppUtils.doHttpRequest(url, mHttpRequestListener);
+		AppUtils.doGETHttpRequest(url, mHttpRequestListener);
 	}
 
 	public void entrance(View view) {
@@ -73,7 +73,7 @@ public class ShowActivity
 		                                   //					                                   .addPathSegment(mTicketId)
 		                                   .build();
 
-		AppUtils.doHttpRequest(url, mHttpRequestListener);
+		AppUtils.doGETHttpRequest(url, mHttpRequestListener);
 	}
 
 	private void handleServerResponse(Response response) {

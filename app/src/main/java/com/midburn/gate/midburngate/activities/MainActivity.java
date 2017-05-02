@@ -61,7 +61,7 @@ public class MainActivity
 		                                   .build();
 
 		mProgressBar.setVisibility(View.VISIBLE);
-		AppUtils.doHttpRequest(url, mHttpRequestListener);
+		AppUtils.doGETHttpRequest(url, mHttpRequestListener);
 
 	}
 
@@ -81,8 +81,8 @@ public class MainActivity
 		}
 		else {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
+			AppUtils.createAndShowDialog(this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
-
 	}
 
 	public void scanBarcode(View view) {
@@ -112,7 +112,7 @@ public class MainActivity
 				                                   .build();
 
 				mProgressBar.setVisibility(View.VISIBLE);
-				AppUtils.doHttpRequest(url, mHttpRequestListener);
+				AppUtils.doGETHttpRequest(url, mHttpRequestListener);
 			}
 		}
 	}
