@@ -13,12 +13,17 @@
     <string name="entrance_date">תאריך כניסה:</string>
     <string name="exit">יציאה</string>
     <string name="entrance">כניסה</string>
-    <string name="event_id">מספר אירוע</string>
-    <string name="insert_event_id">הכנס מספר אירוע</string>
+    <string name="gate_code">קוד שער:</string>
+    <string name="insert_gate_code">הכנס קוד שער</string>
     <string name="insert">הכנס</string>
-    <string name="validate_event_id">מספר אירוע ריק</string>
-    <string name="event_id_key">event_id</string>
-    <string name="event">Event</string>
+    <string name="validate_gate_code_empty">קוד שער ריק</string>
+    <string name="validate_gate_code_mismatch">קוד שער צריך להכיל 6 ספרות בדיוק</string>
+    <string name="gate_code_key">gate_code</string>
+    <string name="gate">Gate</string>
     <string name="no_network_dialog_title">אין חיבור לאינטרנט</string>
     <string name="no_network_dialog_message">וודא שיש חיבור לאינטרנט ונסה שוב</string>
+    <string name="barcode">barcode</string>
+    <string name="insert_new_gate_code">הכנס קוד שער חדש</string>
+    <string name="first_entrance_date">תאריך כניסה ראשון:</string>
+    <string name="last_exit_date">תאריך יציאה אחרון:</string>
 </resources>

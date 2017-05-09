@@ -17,7 +17,7 @@ public class SplashActivity
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				Intent intent = new Intent(SplashActivity.this, InsertEventActivity.class);
+				Intent intent = new Intent(SplashActivity.this, InsertGateCodeActivity.class);
 				startActivity(intent);
 
 			}

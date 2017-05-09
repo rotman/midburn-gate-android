@@ -19,10 +19,10 @@ import com.midburn.gate.midburngate.utils.AppUtils;
 
 import okhttp3.Response;
 
-public class InsertEventActivity
+public class InsertGateCodeActivity
 		extends AppCompatActivity {
 
-	private EditText    mEventIdEditText;
+	private EditText    mGateCodeEditText;
 	private ProgressBar mProgressBar;
 
 	private DialogInterface.OnClickListener mBackPressedClickListener;
@@ -30,11 +30,16 @@ public class InsertEventActivity
 	private HttpRequestListener mHttpRequestListener;
 
 	public void eventIdInserted(View view) {
-		String eventId = mEventIdEditText.getText()
-		                                 .toString();
-		if (TextUtils.isEmpty(eventId)) {
+		String gateCode = mGateCodeEditText.getText()
+		                                   .toString();
+		if (TextUtils.isEmpty(gateCode)) {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_event_id), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_gate_code_empty), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
+		if (gateCode.length() != 6) {
+			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
+			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_gate_code_mismatch), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 		boolean hasInternetConnection = AppUtils.isConnected(this);
@@ -47,10 +52,10 @@ public class InsertEventActivity
 			//			mProgressBar.setVisibility(View.VISIBLE);
 
 		//save event id in shared prefs
-			Log.d(AppConsts.TAG, "inserted event_id: " + eventId);
+		Log.d(AppConsts.TAG, "inserted gate code: " + gateCode);
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString(getString(R.string.event_id_key), eventId);
+		editor.putString(getString(R.string.gate_code_key), gateCode);
 			editor.apply();
 
 			Intent intent = new Intent(this, MainActivity.class);
@@ -86,15 +91,15 @@ public class InsertEventActivity
 
 		//read event_id value from shared prefs
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String eventId = sharedPref.getString(getString(R.string.event_id_key), "");
-		Log.d(AppConsts.TAG, "eventId: " + eventId);
-		if (!TextUtils.isEmpty(eventId)) {
+		String gateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+		Log.d(AppConsts.TAG, "gateCode: " + gateCode);
+		if (!TextUtils.isEmpty(gateCode)) {
 			Intent intent = new Intent(this, MainActivity.class);
 			startActivity(intent);
 			finish();
 		}
 
-		getSupportActionBar().setTitle(getString(R.string.event));
+		getSupportActionBar().setTitle(getString(R.string.gate));
 		bindViews();
 	}
 
@@ -113,7 +118,7 @@ public class InsertEventActivity
 	}
 
 	private void bindViews() {
-		mEventIdEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
+		mGateCodeEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_InsertEventActivity);
 	}
 

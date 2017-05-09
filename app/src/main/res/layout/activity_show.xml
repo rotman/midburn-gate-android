@@ -15,10 +15,10 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:text="@string/event_id"
+              android:text="@string/gate_code"
               android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView android:id="@+id/eventIdTextView_ShowActivity"
+    <TextView android:id="@+id/gateCodeTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceLarge"/>
@@ -74,6 +74,28 @@
               android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <TextView android:id="@+id/entranceDateTextView_ShowActivity"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:text="@string/first_entrance_date"
+              android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView android:id="@+id/firstEntranceDateTextView_ShowActivity"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:text="@string/last_exit_date"
+              android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView android:id="@+id/lastExitDateTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"/>

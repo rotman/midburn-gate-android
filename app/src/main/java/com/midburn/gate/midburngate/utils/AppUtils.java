@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
@@ -76,11 +77,19 @@ public class AppUtils {
 	}
 
 	public static void doPOSTHttpRequest(final HttpUrl url, final String requestBodyJson, final HttpRequestListener httpRequestListener) {
+		Log.d(AppConsts.TAG, "url: " + url);
+		Log.d(AppConsts.TAG, "requestBody: " + requestBodyJson);
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				//TODO don't forget to remove the credentials when server is in production
+				String username = "burningtech";
+				String password = "MidburnTechRules!1";
+				String credentials = username + ":" + password;
+				final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 				RequestBody body = RequestBody.create(JSON, requestBodyJson);
 				Request request = new Request.Builder().url(url)
+				                                       .header("Authorization", basic)
 				                                       .post(body)
 				                                       .build();
 				try {

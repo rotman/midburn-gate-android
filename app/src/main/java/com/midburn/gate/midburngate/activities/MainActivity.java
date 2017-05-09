@@ -17,9 +17,19 @@ import android.widget.ProgressBar;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
+import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 
 import okhttp3.HttpUrl;
 import okhttp3.Response;
@@ -36,6 +46,7 @@ public class MainActivity
 
 	private HttpRequestListener mHttpRequestListener;
 
+	private String mGateCode;
 
 	public void manuallyInput(View view) {
 		final String invitationNumber = mInvitationNumberEditText.getText()
@@ -52,37 +63,98 @@ public class MainActivity
 			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
-		HttpUrl url = new HttpUrl.Builder().scheme("https")
+		mProgressBar.setVisibility(View.VISIBLE);
+
+		HttpUrl url = new HttpUrl.Builder().scheme("http")
 		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("api")
 		                                   .addPathSegment("gate")
-		                                   .addQueryParameter("action", "manual_entrance")
-		                                   .addQueryParameter("order", invitationNumber)
-		                                   .addQueryParameter("ticket", ticketNumber)
+		                                   .addPathSegment("get-ticket")
 		                                   .build();
 
-		mProgressBar.setVisibility(View.VISIBLE);
-		AppUtils.doGETHttpRequest(url, mHttpRequestListener);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("ticket", ticketNumber);
+			jsonObject.put("order", invitationNumber);
+		} catch (JSONException e) {
+			Log.e(AppConsts.TAG, e.getMessage());
+		}
 
+		AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
 	}
 
-	private void handleServerResponse(Response response) {
+	public void insertNewGateCode(View view) {
+		//		onBackPressed();
+		Intent intent = new Intent(MainActivity.this, ShowActivity.class);
+		startActivity(intent);
+	}
 
-		if (response != null) {
-			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
+	private void handleServerResponse(final Response response) {
+		MainApplication.getsMainThreadHandler()
+		               .post(new Runnable() {
+			               @Override
+			               public void run() {
+				               if (response == null) {
+					               Log.e(AppConsts.TAG, "response is null");
+					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+					               AppUtils.createAndShowDialog(MainActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               return;
+				               }
 
-			//TODO handle response
+				               try {
+					               String responseBodyString = response.body()
+					                                                   .string();
+					               Log.d(AppConsts.TAG, "response.body():" + responseBodyString);
+					               if (response.code() == AppConsts.RESPONSE_OK) {
+						               AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
 
-			Intent intent = new Intent(this, ShowActivity.class);
-			String date = String.valueOf(android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()));
-			//for now using mock ticket
-			Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
-			intent.putExtra("ticketDetails", ticket);
-			startActivity(intent);
-		}
-		else {
-			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-		}
+						               JSONObject jsonObject = new JSONObject(responseBodyString);
+
+						               JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
+
+						               Ticket ticket = new Ticket();
+						               ticket.setTicketNumber((String) ticketJsonObject.get("ticket_number"));
+						               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
+						               ticket.setTicketType((String) ticketJsonObject.get("type"));
+						               ticket.setInsideEvent((boolean) ticketJsonObject.get("inside_event"));
+						               ticket.setEntranceDate((Date) ticketJsonObject.get("entrance_timestamp"));
+						               ticket.setFirstEntranceDate((Date) ticketJsonObject.get("first_entrance_timestamp"));
+						               ticket.setLastExitDate((Date) ticketJsonObject.get("last_exit_timestamp"));
+						               ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
+
+						               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
+						               ArrayList<Group> groups = new ArrayList<>();
+						               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
+							               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
+							               Group newGroup = new Group();
+							               newGroup.setId((int) groupJsonObject.get("id"));
+							               newGroup.setName((String) groupJsonObject.get("name"));
+							               newGroup.setType((String) groupJsonObject.get("type"));
+							               groups.add(newGroup);
+						               }
+						               ticket.setGroups(groups);
+
+						               Intent intent = new Intent(MainActivity.this, ShowActivity.class);
+						               //for now using mock ticket
+						               //Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
+						               intent.putExtra("ticketDetails", ticket);
+						               startActivity(intent);
+					               }
+					               else {
+						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
+						               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+						               JSONObject jsonObject = new JSONObject(responseBodyString);
+						               String errorMessage = (String) jsonObject.get("message");
+						               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", errorMessage, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               }
+				               } catch (IOException | JSONException e) {
+					               Log.e(AppConsts.TAG, e.getMessage());
+					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+					               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+				               }
+			               }
+		               });
 	}
 
 	public void scanBarcode(View view) {
@@ -101,18 +173,37 @@ public class MainActivity
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
-				final String contents = intent.getStringExtra("SCAN_RESULT");
-				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-				Log.d(AppConsts.TAG, "contents: " + contents + " | format: " + format);
+				final String barcode = intent.getStringExtra("SCAN_RESULT");
 
-				HttpUrl url = new HttpUrl.Builder().scheme("https")
-				                                   .host(AppConsts.SERVER_URL)
-				                                   .addPathSegment("gate")
-				                                   .addQueryParameter("id", contents)
-				                                   .build();
+				//persist barCode
+				SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences.Editor editor = sharedPref.edit();
+				editor.putString(getString(R.string.barcode), barcode);
+				editor.apply();
+
+				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+				Log.d(AppConsts.TAG, "barcode: " + barcode + " | format: " + format);
 
 				mProgressBar.setVisibility(View.VISIBLE);
-				AppUtils.doGETHttpRequest(url, mHttpRequestListener);
+
+				HttpUrl url = new HttpUrl.Builder().scheme("http")
+				                                   .host(AppConsts.SERVER_URL)
+				                                   .addPathSegment("api")
+				                                   .addPathSegment("gate")
+				                                   .addPathSegment("get-ticket")
+				                                   .build();
+
+				JSONObject jsonObject = new JSONObject();
+				try {
+					//add event_id?
+					jsonObject.put("gate_code", mGateCode);
+					jsonObject.put("barcode", barcode);
+
+				} catch (JSONException e) {
+					Log.e(AppConsts.TAG, e.getMessage());
+				}
+
+				AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
 			}
 		}
 	}
@@ -123,6 +214,9 @@ public class MainActivity
 		setContentView(R.layout.activity_main);
 		bindView();
 		setListeners();
+
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 	}
 
 	private void setListeners() {
@@ -142,13 +236,13 @@ public class MainActivity
 		mBackPressedClickListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				//remove event id from shared prefs
-				Log.d(AppConsts.TAG, "removing event id value");
+				//remove gate code from shared prefs
+				Log.d(AppConsts.TAG, "removing gate code value");
 				SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putString(getString(R.string.event_id_key), "");
+				editor.putString(getString(R.string.gate_code_key), "");
 				editor.apply();
-				Intent intent = new Intent(MainActivity.this, InsertEventActivity.class);
+				Intent intent = new Intent(MainActivity.this, InsertGateCodeActivity.class);
 				startActivity(intent);
 			}
 		};
@@ -188,7 +282,7 @@ public class MainActivity
 
 	@Override
 	public void onBackPressed() {
-		AppUtils.createAndShowDialog(this, "האם ברצונך להזין מספר אירוע חדש?", "פעולה זו תמחוק את מספר האירוע הנוכחי", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
+		AppUtils.createAndShowDialog(this, "האם ברצונך להזין קוד שער חדש?", "פעולה זו תמחוק את קוד השער הנוכחי", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
 	}
 
 

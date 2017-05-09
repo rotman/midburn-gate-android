@@ -32,7 +32,7 @@
             android:name=".activities.ShowActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activities.InsertEventActivity"
+        <activity android:name=".activities.InsertGateCodeActivity"
                   android:screenOrientation="portrait">
         </activity>
     </application>
