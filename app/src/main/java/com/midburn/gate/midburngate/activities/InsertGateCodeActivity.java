@@ -12,22 +12,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.utils.AppUtils;
-
-import okhttp3.Response;
 
 public class InsertGateCodeActivity
 		extends AppCompatActivity {
 
 	private EditText    mGateCodeEditText;
-	private ProgressBar mProgressBar;
 
 	private DialogInterface.OnClickListener mBackPressedClickListener;
-
-	private HttpRequestListener mHttpRequestListener;
 
 	public void eventIdInserted(View view) {
 		String gateCode = mGateCodeEditText.getText()
@@ -48,44 +42,28 @@ public class InsertGateCodeActivity
 			return;
 		}
 
-			//TODO check event id validation
-			//			mProgressBar.setVisibility(View.VISIBLE);
-
 		//save event id in shared prefs
 		Log.d(AppConsts.TAG, "inserted gate code: " + gateCode);
-			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-			SharedPreferences.Editor editor = sharedPref.edit();
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putString(getString(R.string.gate_code_key), gateCode);
-			editor.apply();
+		editor.apply();
 
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-			finish();
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		finish();
 	}
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_insert_event);
+		setContentView(R.layout.activity_insert_gate);
 
 		mBackPressedClickListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				finishAffinity();
-			}
-		};
-
-		mHttpRequestListener = new HttpRequestListener() {
-			@Override
-			public void onResponse(Response response) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						mProgressBar.setVisibility(View.GONE);
-					}
-				});
-				handleServerResponse(response);
 			}
 		};
 
@@ -103,23 +81,8 @@ public class InsertGateCodeActivity
 		bindViews();
 	}
 
-	private void handleServerResponse(Response response) {
-		if (response != null) {
-			AppUtils.playMusic(this, AppConsts.OK_MUSIC);
-			//TODO handle response
-			//TODO add audio playMusic();
-
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-		}
-		else {
-			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-		}
-	}
-
 	private void bindViews() {
 		mGateCodeEditText = (EditText) findViewById(R.id.eventIdEditText_InsertEventActivity);
-		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_InsertEventActivity);
 	}
 
 	@Override

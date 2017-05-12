@@ -16,18 +16,20 @@
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/insert_gate_code"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <EditText android:id="@+id/eventIdEditText_InsertEventActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
+              android:textAppearance="?android:attr/textAppearanceLarge"
               android:inputType="phone"/>
 
     <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="eventIdInserted"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/insert"/>
 
     <ProgressBar

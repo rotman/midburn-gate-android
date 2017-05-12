@@ -8,17 +8,18 @@ public class Ticket
 		implements Serializable {
 
 	private String           mInvitationNumber;
-	private String           mTicketNumber;
+	private int              mTicketNumber;
 	private String           mTicketOwnerName;
 	private String           mTicketType;
 	private Date             mEntranceDate;
 	private Date             mFirstEntranceDate;
 	private Date             mLastExitDate;
-	private boolean          mIsInsideEvent;
+	private int              mIsInsideEvent;
 	private int              mEntranceGroupId;
+	private String           mTicketOwnerId;
 	private ArrayList<Group> mGroups;
 
-	public Ticket(String invitationNumber, String ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
+	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
 		this.mInvitationNumber = invitationNumber;
 		this.mTicketNumber = ticketNumber;
 		this.mTicketOwnerName = ticketOwnerName;
@@ -34,7 +35,7 @@ public class Ticket
 		return mInvitationNumber;
 	}
 
-	public String getTicketNumber() {
+	public int getTicketNumber() {
 		return mTicketNumber;
 	}
 
@@ -50,7 +51,7 @@ public class Ticket
 		return mEntranceDate;
 	}
 
-	public boolean isInsideEvent() {
+	public int isInsideEvent() {
 		return mIsInsideEvent;
 	}
 
@@ -60,6 +61,14 @@ public class Ticket
 
 	public void setFirstEntranceDate(Date firstEntranceDate) {
 		mFirstEntranceDate = firstEntranceDate;
+	}
+
+	public String getTicketOwnerId() {
+		return mTicketOwnerId;
+	}
+
+	public void setTicketOwnerId(String ticketOwnerId) {
+		mTicketOwnerId = ticketOwnerId;
 	}
 
 	public Date getLastExitDate() {
@@ -86,7 +95,7 @@ public class Ticket
 		mGroups = groups;
 	}
 
-	public void setInsideEvent(boolean insideEvent) {
+	public void setInsideEvent(int insideEvent) {
 		mIsInsideEvent = insideEvent;
 	}
 
@@ -94,7 +103,7 @@ public class Ticket
 		mInvitationNumber = invitationNumber;
 	}
 
-	public void setTicketNumber(String ticketNumber) {
+	public void setTicketNumber(int ticketNumber) {
 		mTicketNumber = ticketNumber;
 	}
 

@@ -11,4 +11,8 @@ public class AppConsts {
 
 	public static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
 	public static final int    RESPONSE_OK = 200;
+
+	//errors
+	public static final String QUOTA_REACHED_ERROR      = "QUOTA_REACHED";
+	public static final String USER_OUTSIDE_EVENT_ERROR = "USER_OUTSIDE_EVENT";
 }

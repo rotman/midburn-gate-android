@@ -15,112 +15,83 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:text="@string/gate_code"
-              android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <TextView android:id="@+id/gateCodeTextView_ShowActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
               android:text="@string/invitation_number"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:id="@+id/invitationNumberTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/ticket_number"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:id="@+id/ticketNumberTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/ticket_owner_name"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:id="@+id/ticketOwnerTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:text="@string/ticket_owner_id"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <TextView android:id="@+id/ticketOwnerIdTextView_ShowActivity"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/ticket_type"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:id="@+id/ticketTypeTextView_ShowActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:text="@string/entrance_date"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:id="@+id/entranceDateTextView_ShowActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:text="@string/first_entrance_date"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:id="@+id/firstEntranceDateTextView_ShowActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:text="@string/last_exit_date"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <TextView android:id="@+id/lastExitDateTextView_ShowActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <Button android:id="@+id/exitButton_ShowActivity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:onClick="exit"
                 android:background="@android:color/holo_red_light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="gone"
                 android:text="@string/exit"/>
 
         <Button android:id="@+id/entranceButton_ShowActivity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:onClick="entrance"
                 android:background="@android:color/holo_green_light"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:visibility="gone"
+                android:layout_marginBottom="30dp"
                 android:text="@string/entrance"/>
 
-    </LinearLayout>
+    <Button android:id="@+id/cancelButton_ShowActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="cancel"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/cancel"/>
 
     <ProgressBar
         android:id="@+id/progressBar_ShowActivity"
@@ -128,6 +99,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-
-
 </LinearLayout>

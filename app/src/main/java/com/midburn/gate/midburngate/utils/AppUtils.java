@@ -106,4 +106,18 @@ public class AppUtils {
 		});
 		thread.start();
 	}
+
+	public static String getErrorMessage(Context context, String error) {
+		Log.d(AppConsts.TAG, "error to message: " + error);
+		switch (error) {
+			case AppConsts.QUOTA_REACHED_ERROR:
+				return context.getString(R.string.quota_reached_error_message);
+			case AppConsts.USER_OUTSIDE_EVENT_ERROR:
+				return context.getString(R.string.user_outside_event_error_message);
+
+			default:
+				return error;
+
+		}
+	}
 }

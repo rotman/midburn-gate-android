@@ -6,11 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -41,12 +39,13 @@ public class ShowActivity
 	private TextView mTicketOwnerNameTextView;
 	private TextView mTicketTypeTextView;
 	private TextView mEntranceDateTextView;
-	private TextView mTicketFirstEntranceDateTextView;
-	private TextView mTicketLastExitDateTextView;
-	private TextView mGateCodeTextView;
+	//	private TextView mTicketFirstEntranceDateTextView;
+	//	private TextView mTicketLastExitDateTextView;
+	private TextView mTicketOwnerIdTextView;
 
 	private Button      mEntranceButton;
 	private Button      mExitButton;
+	private Button      mCancelButton;
 	private ProgressBar mProgressBar;
 
 
@@ -70,6 +69,7 @@ public class ShowActivity
 
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("http")
 		                                   .host(AppConsts.SERVER_URL)
@@ -122,6 +122,7 @@ public class ShowActivity
 
 					SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 					String barcode = sharedPref.getString(getString(R.string.barcode), "");
+					Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
 					HttpUrl url = new HttpUrl.Builder().scheme("http")
 					                                   .host(AppConsts.SERVER_URL)
@@ -145,6 +146,11 @@ public class ShowActivity
 			});
 			builder.show();
 		}
+	}
+
+	public void cancel(View view) {
+		Intent intent = new Intent(ShowActivity.this, MainActivity.class);
+		startActivity(intent);
 	}
 
 	private void handleServerResponse(final Response response) {
@@ -174,8 +180,8 @@ public class ShowActivity
 						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
 						               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
 						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               String errorMessage = (String) jsonObject.get("message");
-						               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", errorMessage, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+						               String errorMessage = (String) jsonObject.get("error");
+						               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", AppUtils.getErrorMessage(ShowActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 					               }
 				               } catch (IOException | JSONException e) {
 					               Log.e(AppConsts.TAG, e.getMessage());
@@ -213,45 +219,40 @@ public class ShowActivity
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
 			mTicket = ticket;
-			mGateCodeTextView.setText(mGateCode);
 			mInvitationNumberTextView.setText(ticket.getInvitationNumber());
-			mTicketNumberTextView.setText(ticket.getTicketNumber());
+			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
-			mEntranceDateTextView.setText(ticket.getEntranceDate()
-			                                    .toString());
-			mTicketFirstEntranceDateTextView.setText(ticket.getFirstEntranceDate()
-			                                               .toString());
-			mTicketLastExitDateTextView.setText(ticket.getLastExitDate()
-			                                          .toString());
-			toggleButtonsState(ticket.isInsideEvent());
+			mTicketOwnerIdTextView.setText(ticket.getTicketOwnerId());
+			//			mEntranceDateTextView.setText(ticket.getEntranceDate()
+			//			                                    .toString());
+			//			mTicketFirstEntranceDateTextView.setText(ticket.getFirstEntranceDate()
+			//			                                               .toString());
+			//			mTicketLastExitDateTextView.setText(ticket.getLastExitDate()
+			//			                                          .toString());
+			if (ticket.isInsideEvent() == 0) {
+				//the user is outside the event
+				toggleButtonsState(false);
+			}
+			else if (ticket.isInsideEvent() == 1) {
+				//the user is inside the event
+				toggleButtonsState(true);
+			}
+			else {
+				Log.e(AppConsts.TAG, "unknown state. isInsideEvent: " + ticket.isInsideEvent());
+			}
 		}
 	}
 
 	private void toggleButtonsState(boolean isInsideEvent) {
-		mEntranceButton.setEnabled(!isInsideEvent);
-		mExitButton.setEnabled(isInsideEvent);
 		if (isInsideEvent) {
-			mEntranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-			mEntranceButton.setAlpha(.5f);
-			mExitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
+			mEntranceButton.setVisibility(View.GONE);
+			mExitButton.setVisibility(View.VISIBLE);
 		}
 		else {
-			mExitButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-			mExitButton.setAlpha(.5f);
-			mEntranceButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
+			mExitButton.setVisibility(View.GONE);
+			mEntranceButton.setVisibility(View.VISIBLE);
 		}
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			// Respond to the action bar's Up/Home button
-			case android.R.id.home:
-				Intent upIntent = new Intent(this, MainActivity.class);
-				NavUtils.navigateUpTo(this, upIntent);
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	private void bindView() {
@@ -259,13 +260,13 @@ public class ShowActivity
 		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
 		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
 		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
-		mEntranceDateTextView = (TextView) findViewById(R.id.entranceDateTextView_ShowActivity);
 		mEntranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
 		mExitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
-		mGateCodeTextView = (TextView) findViewById(R.id.gateCodeTextView_ShowActivity);
+		mCancelButton = (Button) findViewById(R.id.cancelButton_ShowActivity);
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
-		mTicketFirstEntranceDateTextView = (TextView) findViewById(R.id.firstEntranceDateTextView_ShowActivity);
-		mTicketLastExitDateTextView = (TextView) findViewById(R.id.lastExitDateTextView_ShowActivity);
+		mTicketOwnerIdTextView = (TextView) findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
+		//		mTicketFirstEntranceDateTextView = (TextView) findViewById(R.id.firstEntranceDateTextView_ShowActivity);
+		//		mTicketLastExitDateTextView = (TextView) findViewById(R.id.lastExitDateTextView_ShowActivity);
 	}
 
 	@Override

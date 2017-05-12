@@ -8,11 +8,11 @@
     </string>
     <string name="ok">OK</string>
     <string name="ticket_details">Ticket Details</string>
-    <string name="ticket_owner_name">שם בעל הכרטיס:</string>
+    <string name="ticket_owner_name">שם:</string>
     <string name="ticket_type">סוג הכרטיס:</string>
     <string name="entrance_date">תאריך כניסה:</string>
-    <string name="exit">יציאה</string>
-    <string name="entrance">כניסה</string>
+    <string name="exit">צא מהאירוע</string>
+    <string name="entrance">הכנס לאירוע</string>
     <string name="gate_code">קוד שער:</string>
     <string name="insert_gate_code">הכנס קוד שער</string>
     <string name="insert">הכנס</string>
@@ -26,4 +26,11 @@
     <string name="insert_new_gate_code">הכנס קוד שער חדש</string>
     <string name="first_entrance_date">תאריך כניסה ראשון:</string>
     <string name="last_exit_date">תאריך יציאה אחרון:</string>
+    <string name="drawer_open">פתח</string>
+    <string name="action_menu">menu</string>
+    <string name="ticket_owner_id">תעודת זהות:</string>
+    <string name="cancel">ביטול</string>
+    <string name="scan_barcode">סרוק ברקוד</string>
+    <string name="quota_reached_error_message">מכסה מקסימלית של אנשים באירוע</string>
+    <string name="user_outside_event_error_message">ברנר כבר נמצא בחוץ!</string>
 </resources>

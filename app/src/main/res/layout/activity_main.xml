@@ -12,23 +12,27 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.midburn.gate.midburngate.activities.MainActivity">
 
-    <ImageButton android:layout_width="100dp"
-                 android:layout_height="100dp"
-                 android:layout_gravity="center"
-                 android:scaleType="centerCrop"
-                 android:onClick="scanBarcode"
-                 android:src="@drawable/scan"/>
+
+    <Button android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@android:drawable/ic_menu_edit"
+            android:drawablePadding="6dp"
+            android:onClick="scanBarcode"
+            android:scaleType="centerCrop"
+            android:text="@string/scan_barcode"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/invitation_number"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <EditText android:id="@+id/invitationNumberEditText_MainActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
+              android:textAppearance="?android:attr/textAppearanceLarge"
               android:inputType="phone"/>
 
 
@@ -36,17 +40,19 @@
               android:layout_height="wrap_content"
               android:layout_gravity="end"
               android:text="@string/ticket_number"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <EditText android:id="@+id/ticketNumberEditText_MainActivity"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceLarge"
               android:inputType="phone"/>
 
-    <Button android:layout_width="wrap_content"
+    <Button android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="manuallyInput"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/send"/>
     <ProgressBar
         android:id="@+id/progressBar_MainActivity"
@@ -54,10 +60,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-    <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/insert_new_gate_code"
-            android:onClick="insertNewGateCode"
-            android:layout_gravity="center"/>
 
 </LinearLayout>
