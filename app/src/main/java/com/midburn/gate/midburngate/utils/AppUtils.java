@@ -83,8 +83,8 @@ public class AppUtils {
 			@Override
 			public void run() {
 				//TODO don't forget to remove the credentials when server is in production
-				String username = "burningtech";
-				String password = "MidburnTechRules!1";
+				String username = "spark@midburn.org";
+				String password = "spark";
 				String credentials = username + ":" + password;
 				final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 				RequestBody body = RequestBody.create(JSON, requestBodyJson);
@@ -114,7 +114,18 @@ public class AppUtils {
 				return context.getString(R.string.quota_reached_error_message);
 			case AppConsts.USER_OUTSIDE_EVENT_ERROR:
 				return context.getString(R.string.user_outside_event_error_message);
-
+			case AppConsts.GATE_CODE_MISSING_ERROR:
+				return context.getString(R.string.gate_code_missing_error_message);
+			case AppConsts.TICKET_NOT_FOUND_ERROR:
+				return context.getString(R.string.ticket_not_found_error_message);
+			case AppConsts.BAD_SEARCH_PARAMETERS_ERROR:
+				return context.getString(R.string.bad_search_params_error_message);
+			case AppConsts.ALREADY_INSIDE_ERROR:
+				return context.getString(R.string.already_inside_error_message);
+			case AppConsts.TICKET_NOT_IN_GROUP_ERROR:
+				return context.getString(R.string.ticker_not_in_group_error_message);
+			case AppConsts.INTERNAL_ERROR:
+				return context.getString(R.string.internal_error_message);
 			default:
 				return error;
 

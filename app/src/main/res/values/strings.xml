@@ -14,7 +14,7 @@
     <string name="exit">צא מהאירוע</string>
     <string name="entrance">הכנס לאירוע</string>
     <string name="gate_code">קוד שער:</string>
-    <string name="insert_gate_code">הכנס קוד שער</string>
+    <string name="insert_gate_code">הכנס קוד אירוע</string>
     <string name="insert">הכנס</string>
     <string name="validate_gate_code_empty">קוד שער ריק</string>
     <string name="validate_gate_code_mismatch">קוד שער צריך להכיל 6 ספרות בדיוק</string>
@@ -31,6 +31,17 @@
     <string name="ticket_owner_id">תעודת זהות:</string>
     <string name="cancel">ביטול</string>
     <string name="scan_barcode">סרוק ברקוד</string>
+    <!--errors-->
     <string name="quota_reached_error_message">מכסה מקסימלית של אנשים באירוע</string>
-    <string name="user_outside_event_error_message">ברנר כבר נמצא בחוץ!</string>
+    <string name="user_outside_event_error_message">ברנר כבר נמצא מחוץ לאירוע</string>
+    <string name="gate_code_missing_error_message">קוד אירוע חסר או לא קיים</string>
+    <string name="ticket_not_found_error_message">כרטיס לא נמצא</string>
+    <string name="bad_search_params_error_message">הפרטים שהזנת חסרים או לא קיימים. בבקשה ספק ברקוד
+        או מספר כרטיס והזמנה
+    </string>
+    <string name="already_inside_error_message">ברנר כבר נמצא בתוך האירוע</string>
+    <string name="ticker_not_in_group_error_message">הכרטיס לא קיים בתוך הקבוצה</string>
+    <string name="server_error_message">השרת למטה. נסה שוב</string>
+    <string name="internal_error_message">שגיאת שרת או שרת למטה</string>
+    <string name="allowed_park_disabled">המשתמש רשאי לחנות בחניית נכים</string>
 </resources>

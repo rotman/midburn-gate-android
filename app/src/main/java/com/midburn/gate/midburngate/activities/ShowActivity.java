@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,14 +36,15 @@ import okhttp3.Response;
 public class ShowActivity
 		extends AppCompatActivity {
 
-	private TextView mInvitationNumberTextView;
-	private TextView mTicketNumberTextView;
-	private TextView mTicketOwnerNameTextView;
-	private TextView mTicketTypeTextView;
-	private TextView mEntranceDateTextView;
+	private TextView     mInvitationNumberTextView;
+	private TextView     mTicketNumberTextView;
+	private TextView     mTicketOwnerNameTextView;
+	private TextView     mTicketTypeTextView;
+	private TextView     mEntranceDateTextView;
+	private LinearLayout mDisabledLayout;
 	//	private TextView mTicketFirstEntranceDateTextView;
 	//	private TextView mTicketLastExitDateTextView;
-	private TextView mTicketOwnerIdTextView;
+	private TextView     mTicketOwnerIdTextView;
 
 	private Button      mEntranceButton;
 	private Button      mExitButton;
@@ -104,6 +107,21 @@ public class ShowActivity
 		}
 
 		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
+		//check if group type is production. if so, enter immediately
+		for (Group group : groupsArrayList) {
+			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
+				//-1 f  or production type
+				sendEntranceRequest(-1);
+				return;
+			}
+			//TODO ADD GROUPS HANDLE
+			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
+
+			}
+			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
+
+			}
+		}
 		int groupsArrayListSize = groupsArrayList.size();
 		if (groupsArrayListSize > 1) {
 			CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
@@ -119,33 +137,36 @@ public class ShowActivity
 					Group selectedGroup = groupsArrayList.get(which);
 					Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
 					mProgressBar.setVisibility(View.VISIBLE);
-
-					SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-					String barcode = sharedPref.getString(getString(R.string.barcode), "");
-					Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
-
-					HttpUrl url = new HttpUrl.Builder().scheme("http")
-					                                   .host(AppConsts.SERVER_URL)
-					                                   .addPathSegment("api")
-					                                   .addPathSegment("gate")
-					                                   .addPathSegment("gate-enter")
-					                                   .build();
-
-					JSONObject jsonObject = new JSONObject();
-					try {
-						jsonObject.put("gate_code", mGateCode);
-						jsonObject.put("barcode", barcode);
-						jsonObject.put("group_id", selectedGroup.getId());
-
-					} catch (JSONException e) {
-						Log.e(AppConsts.TAG, e.getMessage());
-					}
-
-					AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
+					sendEntranceRequest(which);
 				}
 			});
 			builder.show();
 		}
+	}
+
+	private void sendEntranceRequest(int groupId) {
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
+
+		HttpUrl url = new HttpUrl.Builder().scheme("http")
+		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("api")
+		                                   .addPathSegment("gate")
+		                                   .addPathSegment("gate-enter")
+		                                   .build();
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("barcode", barcode);
+			jsonObject.put("group_id", groupId);
+
+		} catch (JSONException e) {
+			Log.e(AppConsts.TAG, e.getMessage());
+		}
+
+		AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
 	}
 
 	public void cancel(View view) {
@@ -197,7 +218,6 @@ public class ShowActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show);
 		getSupportActionBar().setTitle(getString(R.string.ticket_details));
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		bindView();
 
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -219,7 +239,7 @@ public class ShowActivity
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
 			mTicket = ticket;
-			mInvitationNumberTextView.setText(ticket.getInvitationNumber());
+			mInvitationNumberTextView.setText("6365369");
 			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
@@ -230,6 +250,8 @@ public class ShowActivity
 			//			                                               .toString());
 			//			mTicketLastExitDateTextView.setText(ticket.getLastExitDate()
 			//			                                          .toString());
+
+			//decide which button to show (entrance/exit)
 			if (ticket.isInsideEvent() == 0) {
 				//the user is outside the event
 				toggleButtonsState(false);
@@ -239,8 +261,21 @@ public class ShowActivity
 				toggleButtonsState(true);
 			}
 			else {
-				Log.e(AppConsts.TAG, "unknown state. isInsideEvent: " + ticket.isInsideEvent());
+				Log.e(AppConsts.TAG, "unknown isInsideEvent state. isInsideEvent: " + ticket.isInsideEvent());
 			}
+
+			//decide if disabled layout should be displayed
+			if (ticket.getIsDisabled() == 0) {
+				mDisabledLayout.setVisibility(View.GONE);
+			}
+			else if (ticket.getIsDisabled() == 1) {
+				mDisabledLayout.setVisibility(View.VISIBLE);
+			}
+			else {
+				Log.e(AppConsts.TAG, "unknown state. isDisabled: " + ticket.getIsDisabled());
+				mDisabledLayout.setVisibility(View.GONE);
+			}
+			mDisabledLayout.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -265,6 +300,7 @@ public class ShowActivity
 		mCancelButton = (Button) findViewById(R.id.cancelButton_ShowActivity);
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
 		mTicketOwnerIdTextView = (TextView) findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
+		mDisabledLayout = (LinearLayout) findViewById(R.id.disabledLayout_ShowActivity);
 		//		mTicketFirstEntranceDateTextView = (TextView) findViewById(R.id.firstEntranceDateTextView_ShowActivity);
 		//		mTicketLastExitDateTextView = (TextView) findViewById(R.id.lastExitDateTextView_ShowActivity);
 	}

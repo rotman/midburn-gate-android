@@ -12,15 +12,39 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.midburn.gate.midburngate.activities.MainActivity">
 
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-    <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableEnd="@android:drawable/ic_menu_edit"
-            android:drawablePadding="6dp"
-            android:onClick="scanBarcode"
-            android:scaleType="centerCrop"
-            android:text="@string/scan_barcode"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+        <Button style="@style/RoundedCornerButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="scanBarcode"
+                android:paddingRight="30dip"
+                android:scaleType="centerCrop"
+                android:text="@string/scan_barcode"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <ImageView android:layout_width="40dp"
+                   android:layout_height="40dp"
+                   android:layout_centerVertical="true"
+                   android:layout_marginStart="210dp"
+                   android:src="@drawable/scan"/>
+
+    </RelativeLayout>
+
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/border"/>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="30dp"
+              android:text="או הזן פרטים ידנית:"
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:textStyle="bold"/>
 
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -46,14 +70,18 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceLarge"
+              android:layout_marginBottom="20dp"
               android:inputType="phone"/>
 
     <Button android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            style="@style/RoundedCornerButton"
+            android:foreground="?android:attr/selectableItemBackground"
             android:onClick="manuallyInput"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/send"/>
+
     <ProgressBar
         android:id="@+id/progressBar_MainActivity"
         style="?android:attr/progressBarStyleLarge"

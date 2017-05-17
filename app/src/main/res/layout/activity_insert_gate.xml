@@ -15,6 +15,7 @@
     <TextView android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
+              android:textStyle="bold"
               android:text="@string/insert_gate_code"
               android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -22,12 +23,14 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:textAppearance="?android:attr/textAppearanceLarge"
-              android:inputType="phone"/>
+              android:layout_marginBottom="20dp"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <Button android:layout_width="wrap_content"
+    <Button android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            style="@style/RoundedCornerButton"
+            android:foreground="?android:attr/selectableItemBackground"
             android:onClick="eventIdInserted"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/insert"/>

@@ -17,6 +17,7 @@ public class Ticket
 	private int              mIsInsideEvent;
 	private int              mEntranceGroupId;
 	private String           mTicketOwnerId;
+	private int              IsDisabled;
 	private ArrayList<Group> mGroups;
 
 	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
@@ -61,6 +62,22 @@ public class Ticket
 
 	public void setFirstEntranceDate(Date firstEntranceDate) {
 		mFirstEntranceDate = firstEntranceDate;
+	}
+
+	public int getIsInsideEvent() {
+		return mIsInsideEvent;
+	}
+
+	public void setIsInsideEvent(int isInsideEvent) {
+		mIsInsideEvent = isInsideEvent;
+	}
+
+	public int getIsDisabled() {
+		return IsDisabled;
+	}
+
+	public void setIsDisabled(int isDisabled) {
+		IsDisabled = isDisabled;
 	}
 
 	public String getTicketOwnerId() {

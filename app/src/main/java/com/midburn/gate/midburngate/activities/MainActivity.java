@@ -75,15 +75,8 @@ public class MainActivity
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("gate_code", mGateCode);
-			//			jsonObject.put("ticket", ticketNumber);
-			//			jsonObject.put("order", invitationNumber);
-			jsonObject.put("barcode", "945ef2ec1bf26cf23a0b26939e5c6585");
-
-			//persist barCode TODO remove this
-			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString(getString(R.string.barcode), "945ef2ec1bf26cf23a0b26939e5c6585");
-			editor.apply();
+			jsonObject.put("ticket", ticketNumber);
+			jsonObject.put("order", invitationNumber);
 
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
@@ -112,7 +105,6 @@ public class MainActivity
 						               AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
 
 						               JSONObject jsonObject = new JSONObject(responseBodyString);
-
 						               JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
 
 						               Ticket ticket = new Ticket();
@@ -153,7 +145,13 @@ public class MainActivity
 						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
 						               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
 						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               String errorMessage = (String) jsonObject.get("message");
+						               String errorMessage;
+						               try {
+							               errorMessage = (String) jsonObject.get("error");
+						               } catch (ClassCastException e) {
+							               Log.e(AppConsts.TAG, e.getMessage());
+							               errorMessage = (String) jsonObject.get("message");
+						               }
 						               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", AppUtils.getErrorMessage(MainActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 					               }
 				               } catch (IOException | JSONException e) {
@@ -244,7 +242,7 @@ public class MainActivity
 						SharedPreferences.Editor editor = sharedPref.edit();
 						editor.putString(getString(R.string.gate_code_key), "");
 						editor.apply();
-						
+
 						Intent intent = new Intent(MainActivity.this, InsertGateCodeActivity.class);
 						startActivity(intent);
 					}
