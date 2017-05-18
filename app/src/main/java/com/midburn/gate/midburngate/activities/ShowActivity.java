@@ -36,11 +36,9 @@ import okhttp3.Response;
 public class ShowActivity
 		extends AppCompatActivity {
 
-	private TextView     mInvitationNumberTextView;
 	private TextView     mTicketNumberTextView;
 	private TextView     mTicketOwnerNameTextView;
 	private TextView     mTicketTypeTextView;
-	private TextView     mEntranceDateTextView;
 	private LinearLayout mDisabledLayout;
 	private TextView     mTicketOwnerIdTextView;
 
@@ -48,7 +46,6 @@ public class ShowActivity
 	private Button      mExitButton;
 	private Button      mCancelButton;
 	private ProgressBar mProgressBar;
-
 
 	private HttpRequestListener mHttpRequestListener;
 
@@ -267,7 +264,6 @@ public class ShowActivity
 		if (ticket != null) {
 
 			mTicket = ticket;
-			mInvitationNumberTextView.setText("6365369");
 			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
@@ -308,7 +304,6 @@ public class ShowActivity
 	}
 
 	private void bindView() {
-		mInvitationNumberTextView = (TextView) findViewById(R.id.invitationNumberTextView_ShowActivity);
 		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
 		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
 		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);

@@ -8,7 +8,6 @@ public class Ticket
 		implements Serializable {
 
 	private String			 mBarcode;
-	private String           mInvitationNumber;
 	private int              mTicketNumber;
 	private String           mTicketOwnerName;
 	private String           mTicketType;
@@ -21,14 +20,6 @@ public class Ticket
 	private boolean          mIsDisabled;
 	private ArrayList<Group> mGroups;
 
-	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
-		this.mInvitationNumber = invitationNumber;
-		this.mTicketNumber = ticketNumber;
-		this.mTicketOwnerName = ticketOwnerName;
-		this.mTicketType = ticketType;
-		this.mEntranceDate = entranceDate;
-	}
-
 	public Ticket() {
 
 	}
@@ -39,10 +30,6 @@ public class Ticket
 
 	public void setBarcode(String barcode) {
 		this.mBarcode = barcode;
-	}
-
-	public String getInvitationNumber() {
-		return mInvitationNumber;
 	}
 
 	public int getTicketNumber() {
@@ -123,10 +110,6 @@ public class Ticket
 
 	public void setInsideEvent(int insideEvent) {
 		mIsInsideEvent = insideEvent;
-	}
-
-	public void setInvitationNumber(String invitationNumber) {
-		mInvitationNumber = invitationNumber;
 	}
 
 	public void setTicketNumber(int ticketNumber) {
