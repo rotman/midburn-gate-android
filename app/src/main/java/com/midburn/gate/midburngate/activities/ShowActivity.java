@@ -36,21 +36,16 @@ import okhttp3.Response;
 public class ShowActivity
 		extends AppCompatActivity {
 
-	private TextView     mInvitationNumberTextView;
 	private TextView     mTicketNumberTextView;
 	private TextView     mTicketOwnerNameTextView;
 	private TextView     mTicketTypeTextView;
-	private TextView     mEntranceDateTextView;
 	private LinearLayout mDisabledLayout;
-	//	private TextView mTicketFirstEntranceDateTextView;
-	//	private TextView mTicketLastExitDateTextView;
 	private TextView     mTicketOwnerIdTextView;
 
 	private Button      mEntranceButton;
 	private Button      mExitButton;
 	private Button      mCancelButton;
 	private ProgressBar mProgressBar;
-
 
 	private HttpRequestListener mHttpRequestListener;
 
@@ -70,8 +65,7 @@ public class ShowActivity
 
 		mProgressBar.setVisibility(View.VISIBLE);
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		String barcode = mTicket.getBarcode();
 		Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
@@ -106,7 +100,20 @@ public class ShowActivity
 			return;
 		}
 
+		// PATCH: (may ben arie) next time it shouldn't be hardcoded..
+		// this code is only meant to be used before the midburn, it handles the early arrivals.
+		if (mGateCode.equals("171819")) {
+			handleEarlyArrival();
+			return;
+		}
+
+		// send entrance request
+		sendEntranceRequest(-1);
+	}
+
+	private void handleEarlyArrival() {
 		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
+
 		//check if group type is production. if so, enter immediately
 		for (Group group : groupsArrayList) {
 			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
@@ -114,39 +121,56 @@ public class ShowActivity
 				sendEntranceRequest(-1);
 				return;
 			}
-			//TODO ADD GROUPS HANDLE
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
-
-			}
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
-
-			}
 		}
+
+		// show group selection dialog
 		int groupsArrayListSize = groupsArrayList.size();
-		if (groupsArrayListSize > 1) {
-			CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
-			for (int i = 0 ; i < groupsArrayListSize ; i++) {
-				groupsArray[i] = groupsArrayList.get(i)
-				                                .getName();
+		CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
+		for (int i = 0 ; i < groupsArrayListSize ; i++) {
+			Group group = groupsArrayList.get(i);
+			groupsArray[i] = getGroupType(group) + ": "+ group.getName();
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("בחר קבוצה");
+		builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Group selectedGroup = groupsArrayList.get(which);
+				Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
+				mProgressBar.setVisibility(View.VISIBLE);
+				sendEntranceRequest(which);
 			}
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("בחר קבוצה");
-			builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Group selectedGroup = groupsArrayList.get(which);
-					Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
-					mProgressBar.setVisibility(View.VISIBLE);
-					sendEntranceRequest(which);
-				}
-			});
-			builder.show();
+		});
+		builder.show();
+
+		// no groups alert
+		if (groupsArrayListSize == 0) {
+			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
 	}
 
+	private String getGroupType(Group group) {
+		if (group.getType() == null) {
+			return "";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_ART)) {
+			return "מיצב";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_CAMP)) {
+			return "מחנה";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_PRODUCTION)) {
+			return "הפקה";
+		}
+
+		return "";
+	}
+
 	private void sendEntranceRequest(int groupId) {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		String barcode = mTicket.getBarcode();
 		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
@@ -238,18 +262,12 @@ public class ShowActivity
 
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
+
 			mTicket = ticket;
-			mInvitationNumberTextView.setText("6365369");
 			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
 			mTicketOwnerIdTextView.setText(ticket.getTicketOwnerId());
-			//			mEntranceDateTextView.setText(ticket.getEntranceDate()
-			//			                                    .toString());
-			//			mTicketFirstEntranceDateTextView.setText(ticket.getFirstEntranceDate()
-			//			                                               .toString());
-			//			mTicketLastExitDateTextView.setText(ticket.getLastExitDate()
-			//			                                          .toString());
 
 			//decide which button to show (entrance/exit)
 			if (ticket.isInsideEvent() == 0) {
@@ -286,7 +304,6 @@ public class ShowActivity
 	}
 
 	private void bindView() {
-		mInvitationNumberTextView = (TextView) findViewById(R.id.invitationNumberTextView_ShowActivity);
 		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
 		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
 		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
@@ -296,8 +313,6 @@ public class ShowActivity
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
 		mTicketOwnerIdTextView = (TextView) findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
 		mDisabledLayout = (LinearLayout) findViewById(R.id.disabledLayout_ShowActivity);
-		//		mTicketFirstEntranceDateTextView = (TextView) findViewById(R.id.firstEntranceDateTextView_ShowActivity);
-		//		mTicketLastExitDateTextView = (TextView) findViewById(R.id.lastExitDateTextView_ShowActivity);
 	}
 
 	@Override

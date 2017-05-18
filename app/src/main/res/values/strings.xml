@@ -45,4 +45,5 @@
     <string name="internal_error_message">שגיאת שרת או שרת למטה</string>
     <string name="allowed_park_disabled">המשתמש רשאי לחנות בחניית נכים</string>
     <string name="insert_manually">או הזן פרטים ידנית:</string>
+    <string name="no_early_arrival_message">לא נמצאה הקצאה לכניסה מוקדמת</string>
 </resources>
