@@ -112,19 +112,10 @@ public class MainActivity
 						               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
 						               ticket.setTicketType((String) ticketJsonObject.get("type"));
 						               ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
-						               //						               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
-						               //						               ticket.setEntranceDate((Date) ticketJsonObject.get("entrance_timestamp"));
-						               //						               ticket.setFirstEntranceDate((Date) ticketJsonObject.get("first_entrance_timestamp"));
-						               //						               ticket.setLastExitDate((Date) ticketJsonObject.get("last_exit_timestamp"));
-						               //						               ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
+									   ticket.setTicketOwnerId(ticketJsonObject.getString("israeli_id"));
 
 						               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
 						               ArrayList<Group> groups = new ArrayList<>();
-						               //mock groups
-//						               groups.add(new Group(3, "music", "rabbits"));
-//						               groups.add(new Group(15, "art", "sunshine"));
-//						               groups.add(new Group(3, "chill", "handy camp"));
-
 						               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
 							               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
 							               Group newGroup = new Group();
@@ -136,8 +127,6 @@ public class MainActivity
 						               ticket.setGroups(groups);
 
 						               Intent intent = new Intent(MainActivity.this, ShowActivity.class);
-						               //for now using mock ticket
-						               //Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
 						               intent.putExtra("ticketDetails", ticket);
 						               startActivity(intent);
 					               }

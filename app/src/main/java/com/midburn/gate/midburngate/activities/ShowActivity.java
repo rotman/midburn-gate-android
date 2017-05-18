@@ -272,18 +272,13 @@ public class ShowActivity
 
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
+
 			mTicket = ticket;
 			mInvitationNumberTextView.setText("6365369");
 			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
 			mTicketOwnerIdTextView.setText(ticket.getTicketOwnerId());
-			//			mEntranceDateTextView.setText(ticket.getEntranceDate()
-			//			                                    .toString());
-			//			mTicketFirstEntranceDateTextView.setText(ticket.getFirstEntranceDate()
-			//			                                               .toString());
-			//			mTicketLastExitDateTextView.setText(ticket.getLastExitDate()
-			//			                                          .toString());
 
 			//decide which button to show (entrance/exit)
 			if (ticket.isInsideEvent() == 0) {
