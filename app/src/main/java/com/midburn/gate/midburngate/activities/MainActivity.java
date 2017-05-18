@@ -65,7 +65,7 @@ public class MainActivity
 		}
 		mProgressBar.setVisibility(View.VISIBLE);
 
-		HttpUrl url = new HttpUrl.Builder().scheme("http")
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
 		                                   .addPathSegment("api")
 		                                   .addPathSegment("gate")
@@ -112,7 +112,7 @@ public class MainActivity
 						               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
 						               ticket.setTicketType((String) ticketJsonObject.get("type"));
 						               ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
-						               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
+						               //						               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
 						               //						               ticket.setEntranceDate((Date) ticketJsonObject.get("entrance_timestamp"));
 						               //						               ticket.setFirstEntranceDate((Date) ticketJsonObject.get("first_entrance_timestamp"));
 						               //						               ticket.setLastExitDate((Date) ticketJsonObject.get("last_exit_timestamp"));
@@ -163,11 +163,11 @@ public class MainActivity
 		               });
 	}
 
-	public void scanBarcode(View view) {
+	public void scanQR(View view) {
 		try {
 			//start the scanning activity from the com.google.zxing.client.android.SCAN intent
 			Intent intent = new Intent(AppConsts.ACTION_SCAN);
-			intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+			intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 			startActivityForResult(intent, 0);
 		} catch (ActivityNotFoundException anfe) {
 			//on catch, show the download dialog
@@ -192,7 +192,7 @@ public class MainActivity
 
 				mProgressBar.setVisibility(View.VISIBLE);
 
-				HttpUrl url = new HttpUrl.Builder().scheme("http")
+				HttpUrl url = new HttpUrl.Builder().scheme("https")
 				                                   .host(AppConsts.SERVER_URL)
 				                                   .addPathSegment("api")
 				                                   .addPathSegment("gate")

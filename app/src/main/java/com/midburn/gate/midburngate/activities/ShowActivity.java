@@ -74,7 +74,7 @@ public class ShowActivity
 		String barcode = sharedPref.getString(getString(R.string.barcode), "");
 		Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
-		HttpUrl url = new HttpUrl.Builder().scheme("http")
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
 		                                   .addPathSegment("api")
 		                                   .addPathSegment("gate")
@@ -149,7 +149,7 @@ public class ShowActivity
 		String barcode = sharedPref.getString(getString(R.string.barcode), "");
 		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
 
-		HttpUrl url = new HttpUrl.Builder().scheme("http")
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
 		                                   .addPathSegment("api")
 		                                   .addPathSegment("gate")

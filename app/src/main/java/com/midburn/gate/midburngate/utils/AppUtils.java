@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.util.Log;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
@@ -82,14 +81,8 @@ public class AppUtils {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				//TODO don't forget to remove the credentials when server is in production
-				String username = "spark@midburn.org";
-				String password = "spark";
-				String credentials = username + ":" + password;
-				final String basic = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 				RequestBody body = RequestBody.create(JSON, requestBodyJson);
 				Request request = new Request.Builder().url(url)
-				                                       .header("Authorization", basic)
 				                                       .post(body)
 				                                       .build();
 				try {

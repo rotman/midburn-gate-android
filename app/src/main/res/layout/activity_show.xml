@@ -123,11 +123,9 @@
 
 
     <Button android:id="@+id/exitButton_ShowActivity"
-            style="@style/RoundedCornerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_light"
-            android:foreground="?android:attr/selectableItemBackground"
             android:onClick="exit"
             android:text="@string/exit"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -137,8 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="entrance"
-                style="@style/RoundedCornerButton"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:background="@android:color/holo_green_light"
                 android:visibility="gone"
                 android:text="@string/entrance"/>
@@ -146,10 +143,8 @@
     <Button android:id="@+id/cancelButton_ShowActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/RoundedCornerButton"
             android:layout_marginTop="30dp"
             android:onClick="cancel"
-            android:foreground="?android:attr/selectableItemBackground"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/cancel"/>
 
