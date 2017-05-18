@@ -136,8 +136,8 @@ public class ShowActivity
 		int groupsArrayListSize = groupsArrayList.size();
 		CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
 		for (int i = 0 ; i < groupsArrayListSize ; i++) {
-			groupsArray[i] = groupsArrayList.get(i)
-					.getName();
+			Group group = groupsArrayList.get(i);
+			groupsArray[i] = getGroupType(group) + ": "+ group.getName();
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("בחר קבוצה");
@@ -156,6 +156,26 @@ public class ShowActivity
 		if (groupsArrayListSize == 0) {
 			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
+	}
+
+	private String getGroupType(Group group) {
+		if (group.getType() == null) {
+			return "";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_ART)) {
+			return "מיצב";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_CAMP)) {
+			return "מחנה";
+		}
+
+		if (group.getType().equals(AppConsts.GROUP_TYPE_PRODUCTION)) {
+			return "הפקה";
+		}
+
+		return "";
 	}
 
 	private void sendEntranceRequest(int groupId) {

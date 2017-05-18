@@ -26,5 +26,5 @@ public class AppConsts {
 	//group types
 	public static final String GROUP_TYPE_PRODUCTION = "הפקה";
 	public static final String GROUP_TYPE_ART        = "אמנות";
-	public static final String GROUP_TYPE_CAMP       = "מחנה";
+	public static final String GROUP_TYPE_CAMP       = "CAMP";
 }
