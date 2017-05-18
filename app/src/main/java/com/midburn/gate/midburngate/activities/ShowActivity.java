@@ -42,8 +42,6 @@ public class ShowActivity
 	private TextView     mTicketTypeTextView;
 	private TextView     mEntranceDateTextView;
 	private LinearLayout mDisabledLayout;
-	//	private TextView mTicketFirstEntranceDateTextView;
-	//	private TextView mTicketLastExitDateTextView;
 	private TextView     mTicketOwnerIdTextView;
 
 	private Button      mEntranceButton;
@@ -70,8 +68,7 @@ public class ShowActivity
 
 		mProgressBar.setVisibility(View.VISIBLE);
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		String barcode = mTicket.getBarcode();
 		Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
@@ -105,9 +102,6 @@ public class ShowActivity
 			Log.e(AppConsts.TAG, "ticket is null");
 			return;
 		}
-
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 
 		// PATCH: (may ben arie) next time it shouldn't be hardcoded..
 		// this code is only meant to be used before the midburn, it handles the early arrivals.
@@ -179,8 +173,7 @@ public class ShowActivity
 	}
 
 	private void sendEntranceRequest(int groupId) {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		String barcode = mTicket.getBarcode();
 		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
@@ -325,8 +318,6 @@ public class ShowActivity
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
 		mTicketOwnerIdTextView = (TextView) findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
 		mDisabledLayout = (LinearLayout) findViewById(R.id.disabledLayout_ShowActivity);
-		//		mTicketFirstEntranceDateTextView = (TextView) findViewById(R.id.firstEntranceDateTextView_ShowActivity);
-		//		mTicketLastExitDateTextView = (TextView) findViewById(R.id.lastExitDateTextView_ShowActivity);
 	}
 
 	@Override

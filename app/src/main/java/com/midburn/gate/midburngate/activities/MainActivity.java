@@ -108,6 +108,7 @@ public class MainActivity
 						               JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
 
 						               Ticket ticket = new Ticket();
+									   ticket.setBarcode(ticketJsonObject.getString("barcode"));
 						               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
 						               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
 						               ticket.setTicketType((String) ticketJsonObject.get("type"));
@@ -169,12 +170,6 @@ public class MainActivity
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
 				final String barcode = intent.getStringExtra("SCAN_RESULT");
-
-				//persist barCode
-				SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putString(getString(R.string.barcode), barcode);
-				editor.apply();
 
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				Log.d(AppConsts.TAG, "barcode: " + barcode + " | format: " + format);

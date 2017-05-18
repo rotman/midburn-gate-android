@@ -7,6 +7,7 @@ import java.util.Date;
 public class Ticket
 		implements Serializable {
 
+	private String			 mBarcode;
 	private String           mInvitationNumber;
 	private int              mTicketNumber;
 	private String           mTicketOwnerName;
@@ -30,6 +31,14 @@ public class Ticket
 
 	public Ticket() {
 
+	}
+
+	public String getBarcode() {
+		return mBarcode;
+	}
+
+	public void setBarcode(String barcode) {
+		this.mBarcode = barcode;
 	}
 
 	public String getInvitationNumber() {
