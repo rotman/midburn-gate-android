@@ -121,9 +121,9 @@ public class MainActivity
 						               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
 						               ArrayList<Group> groups = new ArrayList<>();
 						               //mock groups
-						               groups.add(new Group(3, "music", "rabbits"));
-						               groups.add(new Group(15, "art", "sunshine"));
-						               groups.add(new Group(3, "chill", "handy camp"));
+//						               groups.add(new Group(3, "music", "rabbits"));
+//						               groups.add(new Group(15, "art", "sunshine"));
+//						               groups.add(new Group(3, "chill", "handy camp"));
 
 						               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
 							               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);

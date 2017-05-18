@@ -17,7 +17,7 @@ public class Ticket
 	private int              mIsInsideEvent;
 	private int              mEntranceGroupId;
 	private String           mTicketOwnerId;
-	private int              IsDisabled;
+	private boolean          mIsDisabled;
 	private ArrayList<Group> mGroups;
 
 	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
@@ -72,12 +72,12 @@ public class Ticket
 		mIsInsideEvent = isInsideEvent;
 	}
 
-	public int getIsDisabled() {
-		return IsDisabled;
+	public boolean getIsDisabled() {
+		return mIsDisabled;
 	}
 
-	public void setIsDisabled(int isDisabled) {
-		IsDisabled = isDisabled;
+	public void setIsDisabled(boolean isDisabled) {
+		mIsDisabled = isDisabled;
 	}
 
 	public String getTicketOwnerId() {
