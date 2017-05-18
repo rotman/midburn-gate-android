@@ -265,17 +265,12 @@ public class ShowActivity
 			}
 
 			//decide if disabled layout should be displayed
-			if (ticket.getIsDisabled() == 0) {
-				mDisabledLayout.setVisibility(View.GONE);
-			}
-			else if (ticket.getIsDisabled() == 1) {
+			if (ticket.getIsDisabled()) {
 				mDisabledLayout.setVisibility(View.VISIBLE);
 			}
 			else {
-				Log.e(AppConsts.TAG, "unknown state. isDisabled: " + ticket.getIsDisabled());
 				mDisabledLayout.setVisibility(View.GONE);
 			}
-			mDisabledLayout.setVisibility(View.VISIBLE);
 		}
 	}
 
