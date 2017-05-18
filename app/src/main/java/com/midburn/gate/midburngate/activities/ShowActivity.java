@@ -106,7 +106,23 @@ public class ShowActivity
 			return;
 		}
 
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+
+		// PATCH: (may ben arie) next time it shouldn't be hardcoded..
+		// this code is only meant to be used before the midburn, it handles the early arrivals.
+		if (mGateCode.equals("171819")) {
+			handleEarlyArrival();
+			return;
+		}
+
+		// send entrance request
+		sendEntranceRequest(-1);
+	}
+
+	private void handleEarlyArrival() {
 		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
+
 		//check if group type is production. if so, enter immediately
 		for (Group group : groupsArrayList) {
 			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
@@ -114,33 +130,31 @@ public class ShowActivity
 				sendEntranceRequest(-1);
 				return;
 			}
-			//TODO ADD GROUPS HANDLE
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
-
-			}
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
-
-			}
 		}
+
+		// show group selection dialog
 		int groupsArrayListSize = groupsArrayList.size();
-		if (groupsArrayListSize > 1) {
-			CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
-			for (int i = 0 ; i < groupsArrayListSize ; i++) {
-				groupsArray[i] = groupsArrayList.get(i)
-				                                .getName();
+		CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
+		for (int i = 0 ; i < groupsArrayListSize ; i++) {
+			groupsArray[i] = groupsArrayList.get(i)
+					.getName();
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("בחר קבוצה");
+		builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Group selectedGroup = groupsArrayList.get(which);
+				Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
+				mProgressBar.setVisibility(View.VISIBLE);
+				sendEntranceRequest(which);
 			}
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("בחר קבוצה");
-			builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Group selectedGroup = groupsArrayList.get(which);
-					Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
-					mProgressBar.setVisibility(View.VISIBLE);
-					sendEntranceRequest(which);
-				}
-			});
-			builder.show();
+		});
+		builder.show();
+
+		// no groups alert
+		if (groupsArrayListSize == 0) {
+			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 		}
 	}
 
