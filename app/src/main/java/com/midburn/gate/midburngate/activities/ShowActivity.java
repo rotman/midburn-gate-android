@@ -75,8 +75,7 @@ public class ShowActivity
 
 		mProgressBar.setVisibility(View.VISIBLE);
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
+		String barcode = mTicket.getBarCode();
 		Log.d(AppConsts.TAG, "user barcode to exit: " + barcode);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
