@@ -42,5 +42,14 @@ public class Group
 	public void setName(String name) {
 		mName = name;
 	}
+
+	@Override
+	public String toString() {
+		return "Group{" +
+				"mId=" + mId +
+				", mType='" + mType + '\'' +
+				", mName='" + mName + '\'' +
+				'}';
+	}
 }
 

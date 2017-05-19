@@ -25,22 +25,6 @@ public class InsertGateCodeActivity
 	public void eventIdInserted(View view) {
 		String gateCode = mGateCodeEditText.getText()
 		                                   .toString();
-		if (TextUtils.isEmpty(gateCode)) {
-			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_gate_code_empty), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-			return;
-		}
-//		if (gateCode.length() != 6) {
-		//			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-		//			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.validate_gate_code_mismatch), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-		//			return;
-		//		}
-		boolean hasInternetConnection = AppUtils.isConnected(this);
-		if (!hasInternetConnection) {
-			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-			return;
-		}
-
 		//save event id in shared prefs
 		Log.d(AppConsts.TAG, "inserted gate code: " + gateCode);
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
