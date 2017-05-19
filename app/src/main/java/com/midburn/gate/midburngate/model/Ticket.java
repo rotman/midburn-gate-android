@@ -7,6 +7,7 @@ import java.util.Date;
 public class Ticket
 		implements Serializable {
 
+	private String           mBarCode;
 	private String           mInvitationNumber;
 	private int              mTicketNumber;
 	private String           mTicketOwnerName;
@@ -17,7 +18,7 @@ public class Ticket
 	private int              mIsInsideEvent;
 	private int              mEntranceGroupId;
 	private String           mTicketOwnerId;
-	private boolean          mIsDisabled;
+	private int              mIsDisabled;
 	private ArrayList<Group> mGroups;
 
 	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
@@ -64,6 +65,14 @@ public class Ticket
 		mFirstEntranceDate = firstEntranceDate;
 	}
 
+	public String getBarCode() {
+		return mBarCode;
+	}
+
+	public void setBarCode(String barCode) {
+		mBarCode = barCode;
+	}
+
 	public int getIsInsideEvent() {
 		return mIsInsideEvent;
 	}
@@ -72,11 +81,11 @@ public class Ticket
 		mIsInsideEvent = isInsideEvent;
 	}
 
-	public boolean getIsDisabled() {
+	public int getIsDisabled() {
 		return mIsDisabled;
 	}
 
-	public void setIsDisabled(boolean isDisabled) {
+	public void setIsDisabled(int isDisabled) {
 		mIsDisabled = isDisabled;
 	}
 
@@ -134,5 +143,24 @@ public class Ticket
 
 	public void setEntranceDate(Date entranceDate) {
 		mEntranceDate = entranceDate;
+	}
+
+	@Override
+	public String toString() {
+		return "Ticket{" +
+				"mBarCode='" + mBarCode + '\'' +
+				", mInvitationNumber='" + mInvitationNumber + '\'' +
+				", mTicketNumber=" + mTicketNumber +
+				", mTicketOwnerName='" + mTicketOwnerName + '\'' +
+				", mTicketType='" + mTicketType + '\'' +
+				", mEntranceDate=" + mEntranceDate +
+				", mFirstEntranceDate=" + mFirstEntranceDate +
+				", mLastExitDate=" + mLastExitDate +
+				", mIsInsideEvent=" + mIsInsideEvent +
+				", mEntranceGroupId=" + mEntranceGroupId +
+				", mTicketOwnerId='" + mTicketOwnerId + '\'' +
+				", mIsDisabled=" + mIsDisabled +
+				", mGroups=" + mGroups +
+				'}';
 	}
 }

@@ -74,7 +74,9 @@ public class MainActivity
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("gate_code", mGateCode);
+			if (TextUtils.equals(mGateCode, "171819")) {
+				jsonObject.put("gate_code", mGateCode);
+			}
 			jsonObject.put("ticket", ticketNumber);
 			jsonObject.put("order", invitationNumber);
 
@@ -108,36 +110,56 @@ public class MainActivity
 						               JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
 
 						               Ticket ticket = new Ticket();
-						               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
-						               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
-						               ticket.setTicketType((String) ticketJsonObject.get("type"));
-						               ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
-						               //						               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
-						               //						               ticket.setEntranceDate((Date) ticketJsonObject.get("entrance_timestamp"));
-						               //						               ticket.setFirstEntranceDate((Date) ticketJsonObject.get("first_entrance_timestamp"));
-						               //						               ticket.setLastExitDate((Date) ticketJsonObject.get("last_exit_timestamp"));
-						               //						               ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
-
-						               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
-						               ArrayList<Group> groups = new ArrayList<>();
-						               //mock groups
-//						               groups.add(new Group(3, "music", "rabbits"));
-//						               groups.add(new Group(15, "art", "sunshine"));
-//						               groups.add(new Group(3, "chill", "handy camp"));
-
-						               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
-							               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
-							               Group newGroup = new Group();
-							               newGroup.setId((int) groupJsonObject.get("id"));
-							               newGroup.setName((String) groupJsonObject.get("name"));
-							               newGroup.setType((String) groupJsonObject.get("type"));
-							               groups.add(newGroup);
+						               //bullet proof null properties
+						               if (!ticketJsonObject.isNull("barcode")) {
+							               ticket.setBarCode((String) ticketJsonObject.get("barcode"));
 						               }
-						               ticket.setGroups(groups);
+						               else {
+							               Log.e(AppConsts.TAG, "returned barcode is null. can't continue!!!");
+						               }
+						               if (!ticketJsonObject.isNull("ticket_number")) {
+							               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
+						               }
+						               if (!ticketJsonObject.isNull("holder_name")) {
+							               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
+						               }
+						               if (!ticketJsonObject.isNull("type")) {
+							               ticket.setTicketType((String) ticketJsonObject.get("type"));
+						               }
+						               if (!ticketJsonObject.isNull("inside_event")) {
+							               ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
+						               }
+						               if (!ticketJsonObject.isNull("israeli_id")) {
+							               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
+						               }
+						               if (!ticketJsonObject.isNull("disabled_parking")) {
+							               ticket.setIsDisabled((int) ticketJsonObject.get("disabled_parking"));
+						               }
+						               if (!ticketJsonObject.isNull("entrance_group_id")) {
+							               ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
+						               }
+						               if (!ticketJsonObject.isNull("groups")) {
+							               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
+							               ArrayList<Group> groups = new ArrayList<>();
+							               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
+								               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
+								               Group newGroup = new Group();
+								               if (!groupJsonObject.isNull("id") && !groupJsonObject.isNull("name") && !groupJsonObject.isNull("type")) {
+									               newGroup.setId((int) groupJsonObject.get("id"));
+									               newGroup.setName((String) groupJsonObject.get("name"));
+									               newGroup.setType((String) groupJsonObject.get("type"));
+									               groups.add(newGroup);
+								               }
+								               else {
+									               Log.e(AppConsts.TAG, "one of the group's fields is null");
+								               }
+							               }
+							               ticket.setGroups(groups);
+						               }
+
+						               Log.d(AppConsts.TAG, ticket.toString());
 
 						               Intent intent = new Intent(MainActivity.this, ShowActivity.class);
-						               //for now using mock ticket
-						               //Ticket ticket = new Ticket("123456", "876543", "רותם מתיתיהו", "רגיל", date);
 						               intent.putExtra("ticketDetails", ticket);
 						               startActivity(intent);
 					               }
@@ -180,13 +202,6 @@ public class MainActivity
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
 				final String barcode = intent.getStringExtra("SCAN_RESULT");
-
-				//persist barCode
-				SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putString(getString(R.string.barcode), barcode);
-				editor.apply();
-
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				Log.d(AppConsts.TAG, "barcode: " + barcode + " | format: " + format);
 
@@ -201,8 +216,9 @@ public class MainActivity
 
 				JSONObject jsonObject = new JSONObject();
 				try {
-					//add event_id?
-					jsonObject.put("gate_code", mGateCode);
+					if (TextUtils.equals(mGateCode, "171819")) {
+						jsonObject.put("gate_code", mGateCode);
+					}
 					jsonObject.put("barcode", barcode);
 
 				} catch (JSONException e) {

@@ -36,7 +36,6 @@ import okhttp3.Response;
 public class ShowActivity
 		extends AppCompatActivity {
 
-	private TextView     mInvitationNumberTextView;
 	private TextView     mTicketNumberTextView;
 	private TextView     mTicketOwnerNameTextView;
 	private TextView     mTicketTypeTextView;
@@ -51,6 +50,12 @@ public class ShowActivity
 	private Button      mCancelButton;
 	private ProgressBar mProgressBar;
 
+	private enum State {
+		ERALY_ENTRANCE,
+		MIDBURN
+	}
+
+	private State mState;
 
 	private HttpRequestListener mHttpRequestListener;
 
@@ -86,7 +91,6 @@ public class ShowActivity
 			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("barcode", barcode);
 			jsonObject.put("group_id", mTicket.getEntranceGroupId());
-
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
@@ -100,55 +104,121 @@ public class ShowActivity
 			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
-
 		if (mTicket == null) {
 			Log.e(AppConsts.TAG, "ticket is null");
 			return;
 		}
+		if (mState.equals(State.ERALY_ENTRANCE)) {
+			handleGroupTypes();
 
-		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
-		//check if group type is production. if so, enter immediately
-		for (Group group : groupsArrayList) {
-			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
-				//-1 f  or production type
-				sendEntranceRequest(-1);
-				return;
+		}
+		else if (mState.equals(State.MIDBURN)) {
+			sendEntranceRequestWithoutGroups();
+		}
+		else {
+			Log.e(AppConsts.TAG, "unknown state. mState: " + mState);
+		}
+	}
+
+	private void handleGroupTypes() {
+		final ArrayList<String> groupsTypes = new ArrayList<>();
+		for (Group group : mTicket.getGroups()) {
+			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION) && !groupsTypes.contains(AppConsts.GROUP_TYPE_PRODUCTION)) {
+				groupsTypes.add(AppConsts.GROUP_TYPE_PRODUCTION);
 			}
-			//TODO ADD GROUPS HANDLE
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
-
+			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART) && !groupsTypes.contains(AppConsts.GROUP_TYPE_ART)) {
+				groupsTypes.add(AppConsts.GROUP_TYPE_ART);
 			}
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
-
+			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP) && !groupsTypes.contains(AppConsts.GROUP_TYPE_CAMP)) {
+				groupsTypes.add(AppConsts.GROUP_TYPE_CAMP);
 			}
 		}
-		int groupsArrayListSize = groupsArrayList.size();
-		if (groupsArrayListSize > 1) {
-			CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
-			for (int i = 0 ; i < groupsArrayListSize ; i++) {
-				groupsArray[i] = groupsArrayList.get(i)
-				                                .getName();
-			}
+		//show groups types selection dialog
+		int groupsTypesArrayListSize = groupsTypes.size();
+		Log.d(AppConsts.TAG, "groupsTypes.size(): " + groupsTypesArrayListSize);
+		if (groupsTypesArrayListSize > 0) {
+			final CharSequence groupsTypeArray[] = groupsTypes.toArray(new CharSequence[groupsTypesArrayListSize]);
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("בחר קבוצה");
-			builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
+			builder.setTitle("בחר סוג קבוצה");
+			builder.setItems(groupsTypeArray, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Group selectedGroup = groupsArrayList.get(which);
-					Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
-					mProgressBar.setVisibility(View.VISIBLE);
-					sendEntranceRequest(which);
+					String selectedGroupType = groupsTypes.get(which);
+					Log.d(AppConsts.TAG, selectedGroupType + " was clicked.");
+					handleGroupName(selectedGroupType);
 				}
 			});
 			builder.show();
 		}
 	}
 
-	private void sendEntranceRequest(int groupId) {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String barcode = sharedPref.getString(getString(R.string.barcode), "");
-		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
+	private void handleGroupName(final String selectedGroupType) {
+		switch (selectedGroupType) {
+			case AppConsts.GROUP_TYPE_PRODUCTION:
+				sendEntranceRequestWithoutGroups();
+				break;
+			case AppConsts.GROUP_TYPE_ART:
+				ArrayList<String> artGroupsNames = new ArrayList<>();
+				for (Group group : mTicket.getGroups()) {
+					if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
+						artGroupsNames.add(group.getName());
+					}
+				}
+				showGroupsNamesPickerDialogAndSendToServer(artGroupsNames);
+				break;
+			case AppConsts.GROUP_TYPE_CAMP:
+				ArrayList<String> campGroupsNames = new ArrayList<>();
+				for (Group group : mTicket.getGroups()) {
+					if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
+						campGroupsNames.add(group.getName());
+					}
+				}
+				showGroupsNamesPickerDialogAndSendToServer(campGroupsNames);
+				break;
 
+			default:
+				Log.e(AppConsts.TAG, "unknown group type. selectedGroupType: " + selectedGroupType);
+		}
+	}
+
+	private void showGroupsNamesPickerDialogAndSendToServer(final ArrayList<String> groupsNames) {
+		//show groups names from the specific type selection dialog
+		int groupsNameArrayListSize = groupsNames.size();
+		Log.d(AppConsts.TAG, "groupsNames.size(): " + groupsNameArrayListSize);
+		if (groupsNameArrayListSize > 0) {
+			final CharSequence groupsNamesArray[] = groupsNames.toArray(new CharSequence[groupsNameArrayListSize]);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("בחר קבוצה");
+			builder.setItems(groupsNamesArray, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					String selectedGroupName = groupsNames.get(which);
+					Log.d(AppConsts.TAG, selectedGroupName + " was clicked.");
+					//take the group id and send to server
+					for (Group group : mTicket.getGroups()) {
+						if (TextUtils.equals(group.getName(), selectedGroupName)) {
+							sendEntranceRequest(group.getId());
+							break;
+						}
+					}
+				}
+			});
+			builder.show();
+		}
+		else {
+			Log.e(AppConsts.TAG, "No groups inside this type");
+		}
+	}
+
+	private void sendEntranceRequestWithoutGroups() {
+		String barcode = mTicket.getBarCode();
+		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("barcode", barcode);
+		} catch (JSONException e) {
+			Log.e(AppConsts.TAG, e.getMessage());
+		}
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
 		                                   .addPathSegment("api")
@@ -156,15 +226,26 @@ public class ShowActivity
 		                                   .addPathSegment("gate-enter")
 		                                   .build();
 
+		AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
+	}
+
+	private void sendEntranceRequest(int groupId) {
+		String barcode = mTicket.getBarCode();
+		Log.d(AppConsts.TAG, "user barcode to enter: " + barcode);
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("barcode", barcode);
+			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("group_id", groupId);
-
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
+		HttpUrl url = new HttpUrl.Builder().scheme("https")
+		                                   .host(AppConsts.SERVER_URL)
+		                                   .addPathSegment("api")
+		                                   .addPathSegment("gate")
+		                                   .addPathSegment("gate-enter")
+		                                   .build();
 
 		AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
 	}
@@ -220,8 +301,19 @@ public class ShowActivity
 		getSupportActionBar().setTitle(getString(R.string.ticket_details));
 		bindView();
 
+		//fetch gate code from shared prefs
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+
+		//decided that when gate code is "171819", this is early entrance
+		boolean isEarlyEntrance = TextUtils.equals(mGateCode, "171819");
+		if (isEarlyEntrance) {
+			mState = State.ERALY_ENTRANCE;
+		}
+		else {
+			//otherwise, this is the real deal
+			mState = State.MIDBURN;
+		}
 
 		mHttpRequestListener = new HttpRequestListener() {
 			@Override
@@ -239,7 +331,6 @@ public class ShowActivity
 		Ticket ticket = (Ticket) getIntent().getSerializableExtra("ticketDetails");
 		if (ticket != null) {
 			mTicket = ticket;
-			mInvitationNumberTextView.setText("6365369");
 			mTicketNumberTextView.setText(String.valueOf(ticket.getTicketNumber()));
 			mTicketOwnerNameTextView.setText(ticket.getTicketOwnerName());
 			mTicketTypeTextView.setText(ticket.getTicketType());
@@ -263,9 +354,9 @@ public class ShowActivity
 			else {
 				Log.e(AppConsts.TAG, "unknown isInsideEvent state. isInsideEvent: " + ticket.isInsideEvent());
 			}
-
 			//decide if disabled layout should be displayed
-			if (ticket.getIsDisabled()) {
+			if (ticket.getIsDisabled() == 1) {
+				//show disabled parking
 				mDisabledLayout.setVisibility(View.VISIBLE);
 			}
 			else {
@@ -286,7 +377,6 @@ public class ShowActivity
 	}
 
 	private void bindView() {
-		mInvitationNumberTextView = (TextView) findViewById(R.id.invitationNumberTextView_ShowActivity);
 		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
 		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
 		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
