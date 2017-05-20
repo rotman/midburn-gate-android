@@ -24,6 +24,9 @@ import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -238,6 +241,26 @@ public class MainActivity
 		setListeners();
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+
+		checkForUpdates();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		checkForCrashes();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterManagers();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unregisterManagers();
 	}
 
 	@Override
@@ -319,5 +342,19 @@ public class MainActivity
 	@Override
 	public void onBackPressed() {
 		AppUtils.createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
+	}
+
+
+	private void checkForCrashes() {
+		CrashManager.register(this);
+	}
+
+	private void checkForUpdates() {
+		// Remove this for store builds!
+		UpdateManager.register(this);
+	}
+
+	private void unregisterManagers() {
+		UpdateManager.unregister();
 	}
 }
