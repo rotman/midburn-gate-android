@@ -106,7 +106,6 @@ public class ShowActivity
 		}
 		if (mState.equals(State.ERALY_ENTRANCE)) {
 			handleGroupTypes();
-
 		}
 		else if (mState.equals(State.MIDBURN)) {
 			sendEntranceRequestWithoutGroups();
@@ -117,93 +116,41 @@ public class ShowActivity
 	}
 
 	private void handleGroupTypes() {
-		final ArrayList<String> groupsTypes = new ArrayList<>();
-		for (Group group : mTicket.getGroups()) {
-			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION) && !groupsTypes.contains(AppConsts.GROUP_TYPE_PRODUCTION)) {
-				groupsTypes.add(AppConsts.GROUP_TYPE_PRODUCTION);
-			}
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART) && !groupsTypes.contains(AppConsts.GROUP_TYPE_ART)) {
-				groupsTypes.add(AppConsts.GROUP_TYPE_ART);
-			}
-			else if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP) && !groupsTypes.contains(AppConsts.GROUP_TYPE_CAMP)) {
-				groupsTypes.add(AppConsts.GROUP_TYPE_CAMP);
-			}
-		}
-		//show groups types selection dialog
-		int groupsTypesArrayListSize = groupsTypes.size();
-		Log.d(AppConsts.TAG, "groupsTypes.size(): " + groupsTypesArrayListSize);
-		if (groupsTypesArrayListSize > 0) {
-			final CharSequence groupsTypeArray[] = groupsTypes.toArray(new CharSequence[groupsTypesArrayListSize]);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("בחר סוג קבוצה");
-			builder.setItems(groupsTypeArray, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					String selectedGroupType = groupsTypes.get(which);
-					Log.d(AppConsts.TAG, selectedGroupType + " was clicked.");
-					handleGroupName(selectedGroupType);
-				}
-			});
-			builder.show();
-		}
-	}
+		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
 
-	private void handleGroupName(final String selectedGroupType) {
-		switch (selectedGroupType) {
-			case AppConsts.GROUP_TYPE_PRODUCTION:
-				sendEntranceRequestWithoutGroups();
-				break;
-			case AppConsts.GROUP_TYPE_ART:
-				ArrayList<String> artGroupsNames = new ArrayList<>();
-				for (Group group : mTicket.getGroups()) {
-					if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_ART)) {
-						artGroupsNames.add(group.getName());
-					}
-				}
-				showGroupsNamesPickerDialogAndSendToServer(artGroupsNames);
-				break;
-			case AppConsts.GROUP_TYPE_CAMP:
-				ArrayList<String> campGroupsNames = new ArrayList<>();
-				for (Group group : mTicket.getGroups()) {
-					if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_CAMP)) {
-						campGroupsNames.add(group.getName());
-					}
-				}
-				showGroupsNamesPickerDialogAndSendToServer(campGroupsNames);
-				break;
+		// no groups alert
+		if (groupsArrayList == null || groupsArrayList.size() == 0) {
+			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			return;
+		}
 
-			default:
-				Log.e(AppConsts.TAG, "unknown group type. selectedGroupType: " + selectedGroupType);
+		//check if group type is production. if so, select it immediately
+		for (Group group : groupsArrayList) {
+			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
+				sendEntranceRequest(group.getId());
+				return;
+			}
 		}
-	}
 
-	private void showGroupsNamesPickerDialogAndSendToServer(final ArrayList<String> groupsNames) {
-		//show groups names from the specific type selection dialog
-		int groupsNameArrayListSize = groupsNames.size();
-		Log.d(AppConsts.TAG, "groupsNames.size(): " + groupsNameArrayListSize);
-		if (groupsNameArrayListSize > 0) {
-			final CharSequence groupsNamesArray[] = groupsNames.toArray(new CharSequence[groupsNameArrayListSize]);
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("בחר קבוצה");
-			builder.setItems(groupsNamesArray, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					String selectedGroupName = groupsNames.get(which);
-					Log.d(AppConsts.TAG, selectedGroupName + " was clicked.");
-					//take the group id and send to server
-					for (Group group : mTicket.getGroups()) {
-						if (TextUtils.equals(group.getName(), selectedGroupName)) {
-							sendEntranceRequest(group.getId());
-							break;
-						}
-					}
-				}
-			});
-			builder.show();
+		// show group selection dialog
+		int groupsArrayListSize = groupsArrayList.size();
+		CharSequence groupsArray[] = new CharSequence[groupsArrayListSize];
+		for (int i = 0 ; i < groupsArrayListSize ; i++) {
+			Group group = groupsArrayList.get(i);
+			groupsArray[i] = getGroupType(group) + ": "+ group.getName();
 		}
-		else {
-			Log.e(AppConsts.TAG, "No groups inside this type");
-		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("בחר קבוצה");
+		builder.setItems(groupsArray, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Group selectedGroup = groupsArrayList.get(which);
+				Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
+				mProgressBar.setVisibility(View.VISIBLE);
+				sendEntranceRequest(which);
+			}
+		});
+		builder.show();
 	}
 
 	private String getGroupType(Group group) {

@@ -24,7 +24,7 @@ public class AppConsts {
 	public static final String INTERNAL_ERROR              = "Internal error: Cannot read property 'attributes' of null";
 
 	//group types
-	public static final String GROUP_TYPE_PRODUCTION = "PRODUCTION";
-	public static final String GROUP_TYPE_ART        = "ART";
-	public static final String GROUP_TYPE_CAMP       = "CAMP";
+	public static final String GROUP_TYPE_PRODUCTION = "prod_dep";
+	public static final String GROUP_TYPE_ART        = "art_installation";
+	public static final String GROUP_TYPE_CAMP       = "theme_camp";
 }
