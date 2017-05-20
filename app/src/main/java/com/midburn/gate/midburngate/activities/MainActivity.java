@@ -114,6 +114,10 @@ public class MainActivity
 
 						               Ticket ticket = new Ticket();
 						               //bullet proof null properties
+									   if (!jsonObject.isNull("gate_status")) {
+										   ticket.setGateStatus((String)jsonObject.get("gate_status"));
+									   }
+
 						               if (!ticketJsonObject.isNull("barcode")) {
 							               ticket.setBarCode((String) ticketJsonObject.get("barcode"));
 						               }
