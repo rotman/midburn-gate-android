@@ -8,7 +8,7 @@ public class Ticket
 		implements Serializable {
 
 	private String           mBarCode;
-	private String           mInvitationNumber;
+	private int          	 mInvitationNumber;
 	private int              mTicketNumber;
 	private String           mTicketOwnerName;
 	private String           mTicketType;
@@ -22,7 +22,7 @@ public class Ticket
 	private String			 mGateStatus;
 	private ArrayList<Group> mGroups;
 
-	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
+	public Ticket(int invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
 		this.mInvitationNumber = invitationNumber;
 		this.mTicketNumber = ticketNumber;
 		this.mTicketOwnerName = ticketOwnerName;
@@ -42,11 +42,11 @@ public class Ticket
 		this.mGateStatus = gateStatus;
 	}
 
-	public String getInvitationNumber() {
+	public int getInvitationNumber() {
 		return mInvitationNumber;
 	}
 
-	public void setInvitationNumber(String invitationNumber) {
+	public void setInvitationNumber(int invitationNumber) {
 		this.mInvitationNumber = invitationNumber;
 	}
 

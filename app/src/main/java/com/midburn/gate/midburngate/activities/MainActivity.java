@@ -127,8 +127,8 @@ public class MainActivity
 						               if (!ticketJsonObject.isNull("ticket_number")) {
 										   ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
 									   }
-									   if (!ticketJsonObject.isNull("order_number")) {
-										   ticket.setInvitationNumber((String) ticketJsonObject.get("order_number"));
+									   if (!ticketJsonObject.isNull("order_id")) {
+										   ticket.setInvitationNumber((int) ticketJsonObject.get("order_id"));
 									   }
 						               if (!ticketJsonObject.isNull("holder_name")) {
 							               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
