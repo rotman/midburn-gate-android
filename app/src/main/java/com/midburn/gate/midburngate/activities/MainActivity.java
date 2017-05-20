@@ -125,8 +125,11 @@ public class MainActivity
 							               Log.e(AppConsts.TAG, "returned barcode is null. can't continue!!!");
 						               }
 						               if (!ticketJsonObject.isNull("ticket_number")) {
-							               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
-						               }
+										   ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
+									   }
+									   if (!ticketJsonObject.isNull("order_number")) {
+										   ticket.setInvitationNumber((String) ticketJsonObject.get("order_number"));
+									   }
 						               if (!ticketJsonObject.isNull("holder_name")) {
 							               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
 						               }

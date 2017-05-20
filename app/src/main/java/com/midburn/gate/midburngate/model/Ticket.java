@@ -46,6 +46,10 @@ public class Ticket
 		return mInvitationNumber;
 	}
 
+	public void setInvitationNumber(String invitationNumber) {
+		this.mInvitationNumber = invitationNumber;
+	}
+
 	public int getTicketNumber() {
 		return mTicketNumber;
 	}
