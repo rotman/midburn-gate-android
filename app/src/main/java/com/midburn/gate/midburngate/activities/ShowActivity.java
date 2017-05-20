@@ -147,7 +147,7 @@ public class ShowActivity
 				Group selectedGroup = groupsArrayList.get(which);
 				Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
 				mProgressBar.setVisibility(View.VISIBLE);
-				sendEntranceRequest(which);
+				sendEntranceRequest(selectedGroup.getId());
 			}
 		});
 		builder.show();
