@@ -200,6 +200,7 @@ public class MainActivity
 			//start the scanning activity from the com.google.zxing.client.android.SCAN intent
 			Intent intent = new Intent(AppConsts.ACTION_SCAN);
 			intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+			intent.setPackage("com.google.zxing.client.android");
 			startActivityForResult(intent, 0);
 		} catch (ActivityNotFoundException anfe) {
 			//on catch, show the download dialog
