@@ -86,7 +86,6 @@ public class ShowActivity
 		try {
 			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("barcode", barcode);
-			jsonObject.put("group_id", mTicket.getEntranceGroupId());
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
