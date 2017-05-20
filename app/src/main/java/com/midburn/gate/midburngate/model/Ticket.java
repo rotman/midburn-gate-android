@@ -19,6 +19,7 @@ public class Ticket
 	private int              mEntranceGroupId;
 	private String           mTicketOwnerId;
 	private int              mIsDisabled;
+	private String			 mGateStatus;
 	private ArrayList<Group> mGroups;
 
 	public Ticket(String invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
@@ -31,6 +32,14 @@ public class Ticket
 
 	public Ticket() {
 
+	}
+
+	public String getGateStatus() {
+		return mGateStatus;
+	}
+
+	public void setGateStatus(String gateStatus) {
+		this.mGateStatus = gateStatus;
 	}
 
 	public String getInvitationNumber() {
@@ -144,7 +153,8 @@ public class Ticket
 	@Override
 	public String toString() {
 		return "Ticket{" +
-				"mBarCode='" + mBarCode + '\'' +
+				"mGateStatus='" + mGateStatus + '\'' +
+				", mBarCode='" + mBarCode + '\'' +
 				", mInvitationNumber='" + mInvitationNumber + '\'' +
 				", mTicketNumber=" + mTicketNumber +
 				", mTicketOwnerName='" + mTicketOwnerName + '\'' +

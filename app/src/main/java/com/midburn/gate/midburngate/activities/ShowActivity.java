@@ -86,7 +86,6 @@ public class ShowActivity
 		try {
 			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("barcode", barcode);
-			jsonObject.put("group_id", mTicket.getEntranceGroupId());
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
@@ -232,6 +231,7 @@ public class ShowActivity
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("barcode", barcode);
+			jsonObject.put("gate_code", mGateCode);
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
@@ -321,16 +321,6 @@ public class ShowActivity
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 
-		//decided that when gate code is "171819", this is early entrance
-		boolean isEarlyEntrance = TextUtils.equals(mGateCode, "171819");
-		if (isEarlyEntrance) {
-			mState = State.ERALY_ENTRANCE;
-		}
-		else {
-			//otherwise, this is the real deal
-			mState = State.MIDBURN;
-		}
-
 		mHttpRequestListener = new HttpRequestListener() {
 			@Override
 			public void onResponse(Response response) {
@@ -372,6 +362,13 @@ public class ShowActivity
 			}
 			else {
 				mDisabledLayout.setVisibility(View.GONE);
+			}
+
+			//early arrival mode
+			if (ticket.getGateStatus() != null && ticket.getGateStatus().equals("early_arrival")) {
+				mState = State.ERALY_ENTRANCE;
+			}else { //otherwise, this is the real deal
+				mState = State.MIDBURN;
 			}
 		}
 	}
