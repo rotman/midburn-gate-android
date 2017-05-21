@@ -53,12 +53,19 @@ public class ShowActivity
 		MIDBURN
 	}
 
+	private enum Action {
+		ENTER,
+		EXIT
+	}
+
 	private State mState;
+	private Action mAction;
 
 	private HttpRequestListener mHttpRequestListener;
 
 	private String mGateCode;
 	private Ticket mTicket;
+	private Group mSelectedGroup;
 
 	public void exit(View view) {
 		boolean hasInternetConnection = AppUtils.isConnected(this);
@@ -147,6 +154,7 @@ public class ShowActivity
 				Group selectedGroup = groupsArrayList.get(which);
 				Log.d(AppConsts.TAG, selectedGroup.getName() + " was clicked. id: " + selectedGroup.getId());
 				mProgressBar.setVisibility(View.VISIBLE);
+				mSelectedGroup = selectedGroup;
 				sendEntranceRequest(selectedGroup.getId());
 			}
 		});
@@ -239,8 +247,7 @@ public class ShowActivity
 						               AppUtils.playMusic(ShowActivity.this, AppConsts.OK_MUSIC);
 						               String resultMessage = (String) jsonObject.get("message");
 						               Log.d(AppConsts.TAG, "resultMessage: " + resultMessage);
-						               Intent intent = new Intent(ShowActivity.this, MainActivity.class);
-						               startActivity(intent);
+									   showConfirmationAlert();
 					               }
 					               else {
 						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
@@ -256,6 +263,32 @@ public class ShowActivity
 				               }
 			               }
 		               });
+	}
+
+	private  void showConfirmationAlert() {
+		String message = "";
+
+		if (mAction == Action.ENTER) {
+			message = mTicket.getTicketOwnerName() + " נכנס/ה בהצלחה לאירוע.";
+			if (mState == State.ERALY_ENTRANCE) {
+				message += "\n" + "הקצאה לכניסה מוקדמת - " + mSelectedGroup.getName();
+			}
+		} else {
+			message = mTicket.getTicketOwnerName() + " יצא/ה בהצלחה מהאירוע.";
+		}
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
+		builder.setMessage(message)
+				.setTitle("אישור")
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(ShowActivity.this, MainActivity.class);
+						startActivity(intent);
+					}
+				});
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 	@Override
@@ -295,15 +328,18 @@ public class ShowActivity
 			//decide which button to show (entrance/exit)
 			if (ticket.isInsideEvent() == 0) {
 				//the user is outside the event
-				toggleButtonsState(false);
+				mAction = Action.ENTER;
 			}
 			else if (ticket.isInsideEvent() == 1) {
 				//the user is inside the event
-				toggleButtonsState(true);
+				mAction = Action.EXIT;
 			}
 			else {
 				Log.e(AppConsts.TAG, "unknown isInsideEvent state. isInsideEvent: " + ticket.isInsideEvent());
 			}
+			toggleButtonsState();
+
+
 			//decide if disabled layout should be displayed
 			if (ticket.getIsDisabled() == 1) {
 				//show disabled parking
@@ -322,8 +358,8 @@ public class ShowActivity
 		}
 	}
 
-	private void toggleButtonsState(boolean isInsideEvent) {
-		if (isInsideEvent) {
+	private void toggleButtonsState() {
+		if (mAction == Action.EXIT) {
 			mEntranceButton.setVisibility(View.GONE);
 			mExitButton.setVisibility(View.VISIBLE);
 		}
