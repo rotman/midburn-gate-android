@@ -134,6 +134,7 @@ public class ShowActivity
 		//check if group type is production. if so, select it immediately
 		for (Group group : groupsArrayList) {
 			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
+				mSelectedGroup = group;
 				sendEntranceRequest(group.getId());
 				return;
 			}
