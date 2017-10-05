@@ -363,6 +363,7 @@ public class ShowActivity
 		if (mAction == Action.EXIT) {
 			mEntranceButton.setVisibility(View.GONE);
 			mExitButton.setVisibility(View.VISIBLE);
+			mExitButton.setClickable(false); // can't exist
 		}
 		else {
 			mExitButton.setVisibility(View.GONE);
