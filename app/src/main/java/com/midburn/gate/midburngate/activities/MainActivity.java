@@ -77,9 +77,7 @@ public class MainActivity
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			if (TextUtils.equals(mGateCode, "171819")) {
-				jsonObject.put("gate_code", mGateCode);
-			}
+			jsonObject.put("gate_code", mGateCode);
 			jsonObject.put("ticket", ticketNumber);
 			jsonObject.put("order", invitationNumber);
 
@@ -227,9 +225,7 @@ public class MainActivity
 
 				JSONObject jsonObject = new JSONObject();
 				try {
-					if (TextUtils.equals(mGateCode, "171819")) {
-						jsonObject.put("gate_code", mGateCode);
-					}
+					jsonObject.put("gate_code", mGateCode);
 					jsonObject.put("barcode", barcode);
 
 				} catch (JSONException e) {
