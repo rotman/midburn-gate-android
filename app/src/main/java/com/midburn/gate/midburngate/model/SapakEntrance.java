@@ -9,10 +9,10 @@ import android.support.annotation.NonNull;
 public class SapakEntrance
 		implements Comparable<SapakEntrance> {
 
-	String  mDate;
-	int     mPeopleCount;
-	String  mCarPlate;
-	boolean mIsClosed;
+	private String  mDate;
+	private int     mPeopleCount;
+	private String  mCarPlate;
+	private boolean mIsClosed;
 
 	public SapakEntrance(String date, int peopleCount, String carPlate, boolean isClosed) {
 		mDate = date;
