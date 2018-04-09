@@ -1,7 +1,9 @@
 package com.midburn.gate.midburngate.adapters.sapak;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +11,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.midburn.gate.midburngate.R;
+import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.contractors.Contractor;
+import com.midburn.gate.midburngate.contractors.ContractorsApi;
 import com.midburn.gate.midburngate.model.Header;
 import com.midburn.gate.midburngate.model.SapakEntrance;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rotem.matityahu on 3/6/2018.
@@ -27,6 +36,8 @@ public class SapakEntranceListAdapter
 	private ArrayList<SapakEntrance> mSapakEntrances = new ArrayList<>();
 	private Context mContext;
 	private Header  mHeader;
+
+	private String mBarCode;
 
 	public SapakEntranceListAdapter(Context context, String header, ArrayList<SapakEntrance> sapakEntrances) {
 		mSapakEntrances = sapakEntrances;
@@ -99,7 +110,19 @@ public class SapakEntranceListAdapter
 			mExitButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					//TODO send sapak exit request
+					ContractorsApi.Companion.get()
+					                        .departContractor(mBarCode, String.valueOf(mCarPlateTextView.getText()))
+					                        .enqueue(new Callback<Contractor>() {
+						                        @Override
+						                        public void onResponse(@NonNull Call<Contractor> call, @NonNull Response<Contractor> response) {
+							                        Log.d(AppConsts.TAG, "onResponse");
+						                        }
+
+						                        @Override
+						                        public void onFailure(@NonNull Call<Contractor> call, @NonNull Throwable throwable) {
+							                        Log.d(AppConsts.TAG, "onFailure");
+						                        }
+					                        });
 				}
 			});
 		}
