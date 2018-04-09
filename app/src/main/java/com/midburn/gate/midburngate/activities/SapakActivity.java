@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.adapters.sapak.SapakEntranceListAdapter;
@@ -25,11 +26,15 @@ public class SapakActivity
 	private RecyclerView             mRecyclerView;
 	private SapakEntranceListAdapter mAdapter;
 
+	public void createNewEntrance(View view) {
+		//TODO new sapak entrance dialog
+	}
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sapak);
-		mRecyclerView = (RecyclerView) findViewById(R.id.sapak_entrance_recycler_view);
+		mRecyclerView = findViewById(R.id.sapak_entrance_recycler_view);
 		getEntrances();
 	}
 
@@ -56,16 +61,5 @@ public class SapakActivity
 		mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 		mRecyclerView.setLayoutManager(layoutManager);
 		mRecyclerView.setHasFixedSize(true);
-
-		//		runOnUiThread(new Runnable() {
-		//			@Override
-		//			public void run() {
-		//				mAdapter = new SapakEntranceListAdapter(SapakActivity.this, sapakEntrances);
-		//				mRecyclerView.setAdapter(mAdapter);
-		//				RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(SapakActivity.this);
-		//				mRecyclerView.setLayoutManager(layoutManager);
-		//				mRecyclerView.setHasFixedSize(true);
-		//			}
-		//		});
 	}
 }

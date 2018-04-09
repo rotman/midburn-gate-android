@@ -44,6 +44,8 @@
               android:text="432432543253"/>
 
     <Button android:id="@+id/exit_sapak_button"
+            style="@style/RoundedCornerButton"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/entrance_person_count"
