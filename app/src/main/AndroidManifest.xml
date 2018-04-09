@@ -41,6 +41,9 @@
             android:name=".contractors.ContractorsTestActivity"
             android:exported="true">
         </activity>
+        <activity android:name=".activities.SapakActivity"
+                  android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

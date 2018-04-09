@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="16dp"
+              android:orientation="vertical">
+
+    <TextView android:id="@+id/sapak_name"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="10dp"
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <Button style="@style/RoundedCornerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:onClick="createNewEntrance"
+            android:text="כניסה חדשה"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <android.support.v7.widget.RecyclerView android:id="@+id/sapak_entrance_recycler_view"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"/>
+
+</LinearLayout>
