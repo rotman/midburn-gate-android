@@ -51,6 +51,14 @@ public class MainActivity
 
 	private String mGateCode;
 
+	public void enterVehicle(View view) {
+
+	}
+
+	public void exitVehicle(View view) {
+
+	}
+
 	public void manuallyInput(View view) {
 		final String invitationNumber = mInvitationNumberEditText.getText()
 		                                                         .toString();

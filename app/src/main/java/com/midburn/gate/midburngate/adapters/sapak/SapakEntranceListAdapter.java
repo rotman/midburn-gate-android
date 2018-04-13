@@ -97,39 +97,36 @@ public class SapakEntranceListAdapter
 
 		private TextView mDateTextView;
 		private TextView mPersonCountTextView;
-		private TextView mCarPlateTextView;
 		private Button   mExitButton;
 
 		public SapakEntranceViewHolder(View itemView) {
 			super(itemView);
 			mDateTextView = (TextView) itemView.findViewById(R.id.entrance_date_sapak);
 			mPersonCountTextView = (TextView) itemView.findViewById(R.id.entrance_person_count);
-			mCarPlateTextView = (TextView) itemView.findViewById(R.id.entrance_car_plate);
 			mExitButton = (Button) itemView.findViewById(R.id.exit_sapak_button);
-			mExitButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					ContractorsApi.Companion.get()
-					                        .departContractor(mBarCode, String.valueOf(mCarPlateTextView.getText()))
-					                        .enqueue(new Callback<Contractor>() {
-						                        @Override
-						                        public void onResponse(@NonNull Call<Contractor> call, @NonNull Response<Contractor> response) {
-							                        Log.d(AppConsts.TAG, "onResponse");
-						                        }
-
-						                        @Override
-						                        public void onFailure(@NonNull Call<Contractor> call, @NonNull Throwable throwable) {
-							                        Log.d(AppConsts.TAG, "onFailure");
-						                        }
-					                        });
-				}
-			});
+//			mExitButton.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					ContractorsApi.Companion.get()
+//					                        .departContractor(mBarCode, String.valueOf(mCarPlateTextView.getText()))
+//					                        .enqueue(new Callback<Contractor>() {
+//						                        @Override
+//						                        public void onResponse(@NonNull Call<Contractor> call, @NonNull Response<Contractor> response) {
+//							                        Log.d(AppConsts.TAG, "onResponse");
+//						                        }
+//
+//						                        @Override
+//						                        public void onFailure(@NonNull Call<Contractor> call, @NonNull Throwable throwable) {
+//							                        Log.d(AppConsts.TAG, "onFailure");
+//						                        }
+//					                        });
+//				}
+//			});
 		}
 
 		private void bindSapakEntrance(Contractor.SapakEntrance sapakEntrance) {
 			mDateTextView.setText(sapakEntrance.getDate());
 			mPersonCountTextView.setText(String.valueOf(sapakEntrance.getPeopleCount()));
-			mCarPlateTextView.setText(sapakEntrance.getCarPlate());
 			if (sapakEntrance.isClosed()) {
 				mExitButton.setVisibility(View.INVISIBLE);
 			}
@@ -146,7 +143,7 @@ public class SapakEntranceListAdapter
 
 		public HeaderViewHolder(View itemView) {
 			super(itemView);
-			mHeaderTextView = (TextView) itemView.findViewById(R.id.sapak_list_header);
+			mHeaderTextView = itemView.findViewById(R.id.sapak_list_header);
 		}
 
 		private void bindSapakHeader(String text) {
