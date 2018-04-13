@@ -39,7 +39,7 @@ class ContractorsTestActivity : AppCompatActivity() {
         }
         //endregion
         details_btn.setOnClickListener {
-            val sapakDetailsCall = ContractorsApi.getMock().getContractorDetails("1111")
+            val sapakDetailsCall = ContractorsCalls.getMock().getContractorDetails("1111")
             sapakDetailsCall.enqueue(object : Callback<Contractor> {
                 override fun onFailure(call: Call<Contractor>?, t: Throwable?) {
                     Snackbar.make(root, "sapak details call failed", Snackbar.LENGTH_SHORT)
