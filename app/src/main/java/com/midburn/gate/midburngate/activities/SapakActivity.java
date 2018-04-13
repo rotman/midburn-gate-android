@@ -18,7 +18,6 @@ import com.midburn.gate.midburngate.adapters.sapak.SapakEntranceListAdapter;
 import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.contractors.Contractor;
 import com.midburn.gate.midburngate.contractors.ContractorsApi;
-import com.midburn.gate.midburngate.model.SapakEntrance;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,13 +79,7 @@ public class SapakActivity
 	}
 
 	private void getEntrances() {
-		final ArrayList<SapakEntrance> sapakEntrances = new ArrayList<>();
-		sapakEntrances.add(new SapakEntrance("14/7/18", 3, "321323", false));
-		sapakEntrances.add(new SapakEntrance("15/7/18", 1, "300323", true));
-		sapakEntrances.add(new SapakEntrance("14/7/18", 3, "321323", false));
-		sapakEntrances.add(new SapakEntrance("14/7/18", 3, "321323", true));
-		sapakEntrances.add(new SapakEntrance("14/7/18", 3, "321323", false));
-		sapakEntrances.add(new SapakEntrance("14/7/18", 3, "321323", true));
+		final ArrayList<Contractor.SapakEntrance> sapakEntrances = new ArrayList<>();
 
 		Collections.sort(sapakEntrances);
 

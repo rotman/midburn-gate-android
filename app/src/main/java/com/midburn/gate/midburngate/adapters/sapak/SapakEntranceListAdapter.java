@@ -15,7 +15,6 @@ import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.contractors.Contractor;
 import com.midburn.gate.midburngate.contractors.ContractorsApi;
 import com.midburn.gate.midburngate.model.Header;
-import com.midburn.gate.midburngate.model.SapakEntrance;
 
 import java.util.ArrayList;
 
@@ -33,13 +32,13 @@ public class SapakEntranceListAdapter
 	private static final int TYPE_HEADER = 0;
 	private static final int TYPE_ITEM   = 1;
 
-	private ArrayList<SapakEntrance> mSapakEntrances = new ArrayList<>();
+	private ArrayList<Contractor.SapakEntrance> mSapakEntrances = new ArrayList<>();
 	private Context mContext;
 	private Header  mHeader;
 
 	private String mBarCode;
 
-	public SapakEntranceListAdapter(Context context, String header, ArrayList<SapakEntrance> sapakEntrances) {
+	public SapakEntranceListAdapter(Context context, String header, ArrayList<Contractor.SapakEntrance> sapakEntrances) {
 		mSapakEntrances = sapakEntrances;
 		mContext = context;
 		mHeader = new Header();
@@ -127,7 +126,7 @@ public class SapakEntranceListAdapter
 			});
 		}
 
-		private void bindSapakEntrance(SapakEntrance sapakEntrance) {
+		private void bindSapakEntrance(Contractor.SapakEntrance sapakEntrance) {
 			mDateTextView.setText(sapakEntrance.getDate());
 			mPersonCountTextView.setText(String.valueOf(sapakEntrance.getPeopleCount()));
 			mCarPlateTextView.setText(sapakEntrance.getCarPlate());
