@@ -44,10 +44,12 @@ interface ContractorsCalls {
 
         fun get(): ContractorsCalls = contractorsCalls
 
-        fun getMock(): ContractorsCalls {
+        @JvmOverloads
+        fun getMock(failurePercent: Int = 50): ContractorsCalls {
             val retrofit = getRetrofit()
             // Create a MockRetrofit object with a NetworkBehavior which manages the fake behavior of calls.
             val behavior = NetworkBehavior.create()
+            behavior.setFailurePercent(failurePercent)
             val mockRetrofit = MockRetrofit.Builder(retrofit)
                     .networkBehavior(behavior)
                     .build()
