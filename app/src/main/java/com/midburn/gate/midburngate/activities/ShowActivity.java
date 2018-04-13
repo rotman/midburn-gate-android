@@ -230,38 +230,35 @@ public class ShowActivity
 
 	private void handleServerResponse(final Response response) {
 		MainApplication.getsMainThreadHandler()
-		               .post(new Runnable() {
-			               @Override
-			               public void run() {
-				               if (response == null) {
-					               Log.e(AppConsts.TAG, "response is null");
-					               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(ShowActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-					               return;
+		               .post(() -> {
+			               if (response == null) {
+				               Log.e(AppConsts.TAG, "response is null");
+				               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
+				               AppUtils.createAndShowDialog(ShowActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+				               return;
+			               }
+			               try {
+				               String responseBodyString = response.body()
+				                                                   .string();
+				               Log.d(AppConsts.TAG, "response.body():" + responseBodyString);
+				               if (response.code() == AppConsts.RESPONSE_OK) {
+					               JSONObject jsonObject = new JSONObject(responseBodyString);
+					               AppUtils.playMusic(ShowActivity.this, AppConsts.OK_MUSIC);
+					               String resultMessage = (String) jsonObject.get("message");
+					               Log.d(AppConsts.TAG, "resultMessage: " + resultMessage);
+								   showConfirmationAlert();
 				               }
-				               try {
-					               String responseBodyString = response.body()
-					                                                   .string();
-					               Log.d(AppConsts.TAG, "response.body():" + responseBodyString);
-					               if (response.code() == AppConsts.RESPONSE_OK) {
-						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               AppUtils.playMusic(ShowActivity.this, AppConsts.OK_MUSIC);
-						               String resultMessage = (String) jsonObject.get("message");
-						               Log.d(AppConsts.TAG, "resultMessage: " + resultMessage);
-									   showConfirmationAlert();
-					               }
-					               else {
-						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
-						               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
-						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               String errorMessage = (String) jsonObject.get("error");
-						               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", AppUtils.getErrorMessage(ShowActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
-					               }
-				               } catch (IOException | JSONException e) {
-					               Log.e(AppConsts.TAG, e.getMessage());
+				               else {
+					               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
 					               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               JSONObject jsonObject = new JSONObject(responseBodyString);
+					               String errorMessage = (String) jsonObject.get("error");
+					               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", AppUtils.getErrorMessage(ShowActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 				               }
+			               } catch (IOException | JSONException e) {
+				               Log.e(AppConsts.TAG, e.getMessage());
+				               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
+				               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
 			               }
 		               });
 	}

@@ -1,9 +1,7 @@
 package com.midburn.gate.midburngate.adapters.sapak;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.midburn.gate.midburngate.R;
-import com.midburn.gate.midburngate.consts.AppConsts;
 import com.midburn.gate.midburngate.contractors.Contractor;
-import com.midburn.gate.midburngate.contractors.ContractorsApi;
 import com.midburn.gate.midburngate.model.Header;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by rotem.matityahu on 3/6/2018.

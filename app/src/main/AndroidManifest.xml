@@ -34,10 +34,6 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".activities.InsertGateCodeActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
             android:name=".contractors.ContractorsTestActivity"
             android:exported="true">
         </activity>

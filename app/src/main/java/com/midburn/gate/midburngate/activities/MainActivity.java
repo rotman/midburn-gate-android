@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.contractors.ContractorsCalls;
 import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
@@ -33,9 +35,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MainActivity
 		extends AppCompatActivity {
@@ -254,6 +259,9 @@ public class MainActivity
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 
+		if (TextUtils.isEmpty(mGateCode)) {
+			fetchNewEventCode();
+		}
 		checkForUpdates();
 	}
 
@@ -294,8 +302,7 @@ public class MainActivity
 						editor.putString(getString(R.string.gate_code_key), "");
 						editor.apply();
 
-						Intent intent = new Intent(MainActivity.this, InsertGateCodeActivity.class);
-						startActivity(intent);
+						fetchNewEventCode();
 					}
 				}, android.R.drawable.ic_dialog_alert);
 				return true;
@@ -305,6 +312,33 @@ public class MainActivity
 				return super.onOptionsItemSelected(item);
 
 		}
+	}
+
+	private void fetchNewEventCode() {
+		mProgressBar.setVisibility(View.VISIBLE);
+		ContractorsCalls.Companion.getMock()
+		                          .getEventIds()
+		                          .enqueue(new Callback<List<String>>() {
+			                          @Override
+			                          public void onResponse(Call<List<String>> call, retrofit2.Response<List<String>> response) {
+				                          if (response.body() != null) {
+					                          List<String> eventIds = response.body();
+					                          CharSequence[] eventsList = eventIds.toArray(new CharSequence[eventIds.size()]);
+					                          AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+					                          builder.setTitle("בחר אירוע");
+					                          builder.setItems(eventsList, (dialog, which) -> {
+						                          mGateCode = "fsdfsd";
+						                          mProgressBar.setVisibility(View.INVISIBLE);
+					                          });
+					                          builder.show();
+				                          }
+			                          }
+
+			                          @Override
+			                          public void onFailure(Call<List<String>> call, Throwable t) {
+
+			                          }
+		                          });
 	}
 
 	private void setListeners() {
