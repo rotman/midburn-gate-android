@@ -1,24 +1,29 @@
 package com.midburn.gate.midburngate.contractors
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.MockRetrofit
 import retrofit2.mock.NetworkBehavior
 
 interface ContractorsApi {
 
-    @POST("get-sapak-ticket")
-    fun getContractorDetails(@Query("barcode") barcode: String): retrofit2.Call<Contractor>
+    @GET("suppliers/{contractorId}")
+    fun getContractorDetails(@Path("contractorId") contractorId: String): Call<Contractor>
 
-    @POST("enter-sapak-ticket")
-    fun admitContractor(@Query("barcode") barcode: String, @Query("carPlate") carPlate: String): Call<Contractor>
+    @POST("suppliers/{contractorId}/add_gate_record_info/Inside")
+    fun admitContractor(@Path("contractorId") contractorId: String, @Body body: AdmittanceInfo): Call<Void>
 
-    @POST("exit-sapak-ticket")
-    fun departContractor(@Query("barcode") barcode: String, @Query("carPlate") carPlate: String): Call<Contractor>
+    data class AdmittanceInfo(@SerializedName("vehicle_plate_number") val vehiclePlateNumber: String,
+                              @SerializedName("allowed_visa_hours") val allowedVisaHours: String = "4")
+
+    @POST("suppliers/{contractorId}/add_gate_record_info/Outside")
+    fun departContractor(@Path("contractorId") contractorId: String, @Body body: DepartureInfo): Call<Contractor>
+
+    data class DepartureInfo(@SerializedName("record_id") val recordId: String)
 
     companion object {
         private val contractorsApi by lazy {
@@ -45,16 +50,16 @@ interface ContractorsApi {
     }
 
     private class ContractorsApiMock(private val delegate: BehaviorDelegate<ContractorsApi>) : ContractorsApi {
-        override fun getContractorDetails(barcode: String): Call<Contractor> {
-            return delegate.returningResponse(Contractor("123123", "Israel Israeli")).getContractorDetails(barcode)
+        override fun departContractor(contractorId: String, body: DepartureInfo): Call<Contractor> {
+            return delegate.returningResponse(null).departContractor(contractorId, body)
         }
 
-        override fun admitContractor(barcode: String, carPlate: String): Call<Contractor> {
-            return delegate.returningResponse(Contractor("123123", "Israel Israeli")).admitContractor(barcode, carPlate)
+        override fun getContractorDetails(contractorId: String): Call<Contractor> {
+            return delegate.returningResponse(Contractor(contractorId, "Israel Israeli")).getContractorDetails(contractorId)
         }
 
-        override fun departContractor(barcode: String, carPlate: String): Call<Contractor> {
-            return delegate.returningResponse(Contractor("123123", "Israel Israeli")).departContractor(barcode, carPlate)
+        override fun admitContractor(contractorId: String, body: AdmittanceInfo): Call<Void> {
+            return delegate.returningResponse(null).admitContractor(contractorId, body)
         }
     }
 }
