@@ -23,11 +23,11 @@ interface ContractorsCalls {
     @POST("suppliers/{contractorId}/add_gate_record_info/Outside")
     fun departContractorInternal(@Path("contractorId") contractorId: String, @Body body: DepartureInfo): Call<Contractor>
 
-    @GET("cars/increment")
-    fun carsIncrement(): Call<Void>
+    @POST("vehicle-action/{eventId}/arrival")
+    fun carsIncrement(@Path("eventId") eventId: String): Call<Void>
 
-    @GET("cars/decrement")
-    fun carsDecrement(): Call<Void>
+    @POST("vehicle-action/{eventId}/departure")
+    fun carsDecrement(@Path("eventId") eventId: String): Call<Void>
 
     @GET("eventIds")
     fun getEventIds(): Call<List<String>>
@@ -61,16 +61,16 @@ interface ContractorsCalls {
                 .build()
 
         private class ContractorsCallsMock(private val delegate: BehaviorDelegate<ContractorsCalls>) : ContractorsCalls {
+            override fun carsIncrement(eventId: String): Call<Void> {
+                return delegate.returningResponse(null).carsIncrement(eventId)
+            }
+
+            override fun carsDecrement(eventId: String): Call<Void> {
+                return delegate.returningResponse(null).carsDecrement(eventId)
+            }
+
             override fun getEventIds(): Call<List<String>> {
                 return delegate.returningResponse(listOf("1231", "33333", "111111", "444444")).getEventIds()
-            }
-
-            override fun carsIncrement(): Call<Void> {
-                return delegate.returningResponse(null).carsIncrement()
-            }
-
-            override fun carsDecrement(): Call<Void> {
-                return delegate.returningResponse(null).carsDecrement()
             }
 
             override fun departContractorInternal(contractorId: String, body: DepartureInfo): Call<Contractor> {
