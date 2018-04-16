@@ -39,14 +39,13 @@ class ContractorsTestActivity : AppCompatActivity() {
         }
         //endregion
         details_btn.setOnClickListener {
-            val sapakDetailsCall = ContractorsCalls.getMock().getContractorDetails("1111")
-            sapakDetailsCall.enqueue(object : Callback<Contractor> {
-                override fun onFailure(call: Call<Contractor>?, t: Throwable?) {
-                    Snackbar.make(root, "sapak details call failed", Snackbar.LENGTH_SHORT)
+            NetworkApi.getEvents(it.context, object : NetworkApi.Callback<List<String>> {
+                override fun onSuccess(response: List<String>) {
+                    Snackbar.make(root, "Success!", Snackbar.LENGTH_SHORT).show()
                 }
 
-                override fun onResponse(call: Call<Contractor>?, response: Response<Contractor>?) {
-                    Log.i(this@ContractorsTestActivity.localClassName, response?.body()?.toString())
+                override fun onFailure(throwable: Throwable) {
+                    Snackbar.make(root, "Booooo!", Snackbar.LENGTH_SHORT).show()
                 }
 
             })

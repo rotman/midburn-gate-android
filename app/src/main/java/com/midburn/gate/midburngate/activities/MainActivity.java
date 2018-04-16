@@ -21,7 +21,7 @@ import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
-import com.midburn.gate.midburngate.contractors.ContractorsCalls;
+import com.midburn.gate.midburngate.contractors.NetworkApi;
 import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.utils.AppUtils;
@@ -29,6 +29,7 @@ import com.midburn.gate.midburngate.utils.AppUtils;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,8 +40,6 @@ import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class MainActivity
 		extends AppCompatActivity {
@@ -125,9 +124,9 @@ public class MainActivity
 
 						               Ticket ticket = new Ticket();
 						               //bullet proof null properties
-									   if (!jsonObject.isNull("gate_status")) {
-										   ticket.setGateStatus((String)jsonObject.get("gate_status"));
-									   }
+						               if (!jsonObject.isNull("gate_status")) {
+							               ticket.setGateStatus((String) jsonObject.get("gate_status"));
+						               }
 
 						               if (!ticketJsonObject.isNull("barcode")) {
 							               ticket.setBarCode((String) ticketJsonObject.get("barcode"));
@@ -136,11 +135,11 @@ public class MainActivity
 							               Log.e(AppConsts.TAG, "returned barcode is null. can't continue!!!");
 						               }
 						               if (!ticketJsonObject.isNull("ticket_number")) {
-										   ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
-									   }
-									   if (!ticketJsonObject.isNull("order_id")) {
-										   ticket.setInvitationNumber((int) ticketJsonObject.get("order_id"));
-									   }
+							               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
+						               }
+						               if (!ticketJsonObject.isNull("order_id")) {
+							               ticket.setInvitationNumber((int) ticketJsonObject.get("order_id"));
+						               }
 						               if (!ticketJsonObject.isNull("holder_name")) {
 							               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
 						               }
@@ -316,29 +315,25 @@ public class MainActivity
 
 	private void fetchNewEventCode() {
 		mProgressBar.setVisibility(View.VISIBLE);
-		ContractorsCalls.Companion.getMock()
-		                          .getEventIds()
-		                          .enqueue(new Callback<List<String>>() {
-			                          @Override
-			                          public void onResponse(Call<List<String>> call, retrofit2.Response<List<String>> response) {
-				                          if (response.body() != null) {
-					                          List<String> eventIds = response.body();
-					                          CharSequence[] eventsList = eventIds.toArray(new CharSequence[eventIds.size()]);
-					                          AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-					                          builder.setTitle("בחר אירוע");
-					                          builder.setItems(eventsList, (dialog, which) -> {
-						                          mGateCode = "fsdfsd";
-						                          mProgressBar.setVisibility(View.INVISIBLE);
-					                          });
-					                          builder.show();
-				                          }
-			                          }
+		NetworkApi.INSTANCE.getEvents(this, new NetworkApi.Callback<List<String>>() {
+			@Override
+			public void onFailure(@NotNull Throwable throwable) {
 
-			                          @Override
-			                          public void onFailure(Call<List<String>> call, Throwable t) {
+			}
 
-			                          }
-		                          });
+			@Override
+			public void onSuccess(List<String> eventIds) {
+				CharSequence[] eventsList = eventIds.toArray(new CharSequence[eventIds.size()]);
+				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+				builder.setTitle("בחר אירוע");
+				builder.setItems(eventsList, (dialog, which) -> {
+					mGateCode = "fsdfsd";
+					mProgressBar.setVisibility(View.INVISIBLE);
+				});
+				builder.show();
+			}
+
+		});
 	}
 
 	private void setListeners() {
@@ -379,9 +374,9 @@ public class MainActivity
 	}
 
 	private void bindView() {
-		mInvitationNumberEditText = (EditText) findViewById(R.id.invitationNumberEditText_MainActivity);
-		mTicketNumberEditText = (EditText) findViewById(R.id.ticketNumberEditText_MainActivity);
-		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_MainActivity);
+		mInvitationNumberEditText = findViewById(R.id.invitationNumberEditText_MainActivity);
+		mTicketNumberEditText = findViewById(R.id.ticketNumberEditText_MainActivity);
+		mProgressBar = findViewById(R.id.progressBar_MainActivity);
 	}
 
 
