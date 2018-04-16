@@ -53,8 +53,7 @@ object NetworkApi {
     }
 
     private val networkCalls: NetworkCalls by lazy {
-        if (!BuildConfig.DEBUG) getRetrofit().create(NetworkCalls::class.java)
-        else {
+        if (BuildConfig.USE_MOCK) {
             val retrofit = getRetrofit()
             // Create a MockRetrofit object with a NetworkBehavior which manages the fake behavior of calls.
             val behavior = NetworkBehavior.create()
@@ -64,7 +63,7 @@ object NetworkApi {
                     .build()
             val delegate = mockRetrofit.create(NetworkCalls::class.java)
             NetworkCallsMock(delegate)
-        }
+        } else getRetrofit().create(NetworkCalls::class.java)
     }
 
     private fun getRetrofit(): Retrofit = Retrofit.Builder()

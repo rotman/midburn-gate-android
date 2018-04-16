@@ -16,7 +16,11 @@ android {
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "b0a720d0c07143bd9aa02b6b2461273a"]
     }
     buildTypes {
+        debug {
+            buildConfigField "boolean", "USE_MOCK", 'Boolean.parseBoolean("true")'
+        }
         release {
+            buildConfigField "boolean", "USE_MOCK", 'Boolean.parseBoolean("false")'
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
