@@ -82,7 +82,10 @@ object NetworkApi {
             }
 
             override fun onResponse(call: Call<T>?, response: Response<T>?) {
-                if (response != null && !response.isSuccessful) callback.onFailure(Throwable("response is not successful"))
+                if (response != null && !response.isSuccessful) {
+                    callback.onFailure(Throwable("response is not successful"))
+                    return
+                }
                 val body = response?.body()
                 if (body != null) callback.onSuccess(body)
                 else callback.onFailure(Throwable("Response came back with empty body"))
