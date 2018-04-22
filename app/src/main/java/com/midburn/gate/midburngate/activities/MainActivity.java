@@ -21,9 +21,9 @@ import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
-import com.midburn.gate.midburngate.contractors.NetworkApi;
 import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
+import com.midburn.gate.midburngate.network.NetworkApi;
 import com.midburn.gate.midburngate.utils.AppUtils;
 
 import net.hockeyapp.android.CrashManager;

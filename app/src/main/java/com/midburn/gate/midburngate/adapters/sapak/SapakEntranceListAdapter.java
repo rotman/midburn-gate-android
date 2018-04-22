@@ -9,8 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.midburn.gate.midburngate.R;
-import com.midburn.gate.midburngate.contractors.Contractor;
 import com.midburn.gate.midburngate.model.Header;
+import com.midburn.gate.midburngate.network.Contractor;
 
 import java.util.ArrayList;
 
@@ -93,9 +93,9 @@ public class SapakEntranceListAdapter
 
 		public SapakEntranceViewHolder(View itemView) {
 			super(itemView);
-			mDateTextView = (TextView) itemView.findViewById(R.id.entrance_date_sapak);
-			mPersonCountTextView = (TextView) itemView.findViewById(R.id.entrance_person_count);
-			mExitButton = (Button) itemView.findViewById(R.id.exit_sapak_button);
+			mDateTextView = itemView.findViewById(R.id.entrance_date_sapak);
+			mPersonCountTextView = itemView.findViewById(R.id.entrance_person_count);
+			mExitButton = itemView.findViewById(R.id.exit_sapak_button);
 //			mExitButton.setOnClickListener(new View.OnClickListener() {
 //				@Override
 //				public void onClick(View v) {

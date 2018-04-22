@@ -34,7 +34,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".contractors.ContractorsTestActivity"
+            android:name=".network.TestActivity"
             android:exported="true">
         </activity>
         <activity android:name=".activities.SapakActivity"

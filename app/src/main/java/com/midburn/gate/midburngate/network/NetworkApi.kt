@@ -1,8 +1,9 @@
-package com.midburn.gate.midburngate.contractors
+package com.midburn.gate.midburngate.network
 
 import android.content.Context
 
 import com.midburn.gate.midburngate.BuildConfig
+import com.midburn.gate.midburngate.consts.AppConsts
 import com.midburn.gate.midburngate.utils.AppUtils.isConnected
 import retrofit2.Call
 import retrofit2.Response
@@ -33,6 +34,25 @@ object NetworkApi {
     fun getSapak(context: Context, contractorId: String, callback: Callback<Contractor>) {
         performCall(context, callback, networkCalls.getContractorDetails(contractorId))
     }
+
+    fun getTicketManually(context: Context, eventId: String, ticket: String, order: String, callback: Callback<TicketNew>) {
+        val manualTicketBody = NetworkCalls.ManualTicketBody(eventId, ticket, order)
+        performCall(
+                context,
+                callback,
+                networkCalls.getTicketManually(manualTicketBody)
+        )
+    }
+
+    fun getTicket(context: Context, eventId: String, barcode: String, callback: Callback<TicketNew>) {
+        val barcodeTicketBody = NetworkCalls.BarcodeTicketBody(eventId, barcode)
+        performCall(
+                context,
+                callback,
+                networkCalls.getTicket(barcodeTicketBody)
+        )
+    }
+
 
     private fun <T> performCall(context: Context, callback: Callback<T>, call: Call<T>) {
         if (!isConnected(context)) {
@@ -67,7 +87,7 @@ object NetworkApi {
     }
 
     private fun getRetrofit(): Retrofit = Retrofit.Builder()
-            .baseUrl("https://spark.midburn.org/api/gate/")
+            .baseUrl(AppConsts.SERVER_STAGING_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

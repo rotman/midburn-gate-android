@@ -1,4 +1,4 @@
-package com.midburn.gate.midburngate.contractors
+package com.midburn.gate.midburngate.network
 
 data class Contractor(val id: String, val name: String, val entrances: List<SapakEntrance> = mutableListOf()) {
 
