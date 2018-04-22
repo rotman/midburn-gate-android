@@ -1,4 +1,4 @@
-package com.midburn.gate.midburngate.contractors
+package com.midburn.gate.midburngate.network
 
 import retrofit2.Call
 import retrofit2.http.GET

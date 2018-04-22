@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.adapters.sapak.SapakEntranceListAdapter;
-import com.midburn.gate.midburngate.contractors.Contractor;
+import com.midburn.gate.midburngate.network.Contractor;
 
 import java.util.ArrayList;
 import java.util.Collections;
