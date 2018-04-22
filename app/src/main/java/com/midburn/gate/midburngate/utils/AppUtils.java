@@ -1,5 +1,6 @@
 package com.midburn.gate.midburngate.utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
@@ -129,5 +130,12 @@ public class AppUtils {
 				return error;
 
 		}
+	}
+
+	public static void showProgressDialog(ProgressDialog progressDialog) {
+		progressDialog.setMessage("נא להמתין");
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		progressDialog.setIndeterminate(true);
+		progressDialog.show();
 	}
 }

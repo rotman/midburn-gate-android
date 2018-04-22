@@ -92,11 +92,4 @@
                  android:scaleType="centerInside"
                  android:src="@drawable/car"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar_MainActivity"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-
 </LinearLayout>

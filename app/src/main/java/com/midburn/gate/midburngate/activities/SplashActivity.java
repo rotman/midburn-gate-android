@@ -52,8 +52,10 @@ public class SplashActivity
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
 					failureCounter++;
-					Log.e(AppConsts.TAG, "failureCounter: " + failureCounter);
-					//TODO show error dialog
+					Log.e(AppConsts.TAG, throwable.getMessage() + " failureCounter: " + failureCounter);
+					//TODO show error dialog instaed of moving to main activity
+					Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+					startActivity(intent);
 				}
 			});
 		}

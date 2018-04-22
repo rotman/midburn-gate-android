@@ -1,5 +1,6 @@
 package com.midburn.gate.midburngate.activities;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
@@ -49,16 +49,16 @@ public class MainActivity
 
 	private EditText    mInvitationNumberEditText;
 	private EditText    mTicketNumberEditText;
-	private ProgressBar mProgressBar;
 
 	private DialogInterface.OnClickListener mNeedToDownloadScannerAppClickListener;
 	private DialogInterface.OnClickListener mBackPressedClickListener;
 
 	private HttpRequestListener mHttpRequestListener;
 
-	private String mGateCode;
+	private String mGateCode = "dadsadsa";
 
-	private CarsDialog mCarsDialog;
+	private CarsDialog     mCarsDialog;
+	private ProgressDialog mProgressDialog;
 
 	public void manuallyInput(View view) {
 		final String invitationNumber = mInvitationNumberEditText.getText()
@@ -75,7 +75,7 @@ public class MainActivity
 			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
-		mProgressBar.setVisibility(View.VISIBLE);
+		AppUtils.showProgressDialog(mProgressDialog);
 
 		HttpUrl url = new HttpUrl.Builder().scheme("https")
 		                                   .host(AppConsts.SERVER_URL)
@@ -100,37 +100,38 @@ public class MainActivity
 	public void showCarDialog(View view) {
 		mCarsDialog = new CarsDialog(this, v -> {
 			Log.d(AppConsts.TAG, "carEnter");
-			//TODO show progressbar
+
+			AppUtils.showProgressDialog(mProgressDialog);
 			if (mCarsDialog != null) {
 				mCarsDialog.dismiss();
 			}
 			NetworkApi.INSTANCE.enterCar(this, mGateCode, new NetworkApi.Callback<Unit>() {
 				@Override
 				public void onSuccess(Unit response) {
-
+					mProgressDialog.dismiss();
 				}
 
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
-
+					mProgressDialog.dismiss();
 				}
 			});
 
 		}, v -> {
 			Log.d(AppConsts.TAG, "carExit");
-			//TODO show progressbar
+			AppUtils.showProgressDialog(mProgressDialog);
 			if (mCarsDialog != null) {
 				mCarsDialog.dismiss();
 			}
 			NetworkApi.INSTANCE.exitCar(MainActivity.this, mGateCode, new NetworkApi.Callback<Unit>() {
 				@Override
 				public void onSuccess(Unit response) {
-
+					mCarsDialog.dismiss();
 				}
 
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
-
+					mCarsDialog.dismiss();
 				}
 			});
 		});
@@ -263,7 +264,7 @@ public class MainActivity
 				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 				Log.d(AppConsts.TAG, "barcode: " + barcode + " | format: " + format);
 
-				mProgressBar.setVisibility(View.VISIBLE);
+				AppUtils.showProgressDialog(mProgressDialog);
 
 				HttpUrl url = new HttpUrl.Builder().scheme("https")
 				                                   .host(AppConsts.SERVER_URL)
@@ -390,7 +391,7 @@ public class MainActivity
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mProgressBar.setVisibility(View.GONE);
+						mProgressDialog.dismiss();
 					}
 				});
 				Log.d(AppConsts.TAG, "onResponse called");
@@ -402,7 +403,7 @@ public class MainActivity
 	private void bindView() {
 		mInvitationNumberEditText = findViewById(R.id.invitationNumberEditText_MainActivity);
 		mTicketNumberEditText = findViewById(R.id.ticketNumberEditText_MainActivity);
-		mProgressBar = findViewById(R.id.progressBar_MainActivity);
+		mProgressDialog = new ProgressDialog(this);
 	}
 
 
