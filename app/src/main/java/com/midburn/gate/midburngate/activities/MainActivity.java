@@ -55,7 +55,7 @@ public class MainActivity
 
 	private HttpRequestListener mHttpRequestListener;
 
-	private String mGateCode = "dadsadsa";
+	private String mGateCode;
 
 	private CarsDialog     mCarsDialog;
 	private ProgressDialog mProgressDialog;
