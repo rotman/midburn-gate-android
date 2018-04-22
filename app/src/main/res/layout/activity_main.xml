@@ -82,29 +82,15 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/send"/>
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="20dp"
-                  android:orientation="horizontal">
 
-        <Button android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:background="@android:color/holo_red_light"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold"
-                android:text="רכב יוצא"/>
-
-        <Button android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:background="@android:color/holo_green_light"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textStyle="bold"
-                android:text="רכב נכנס"/>
-
-
-    </LinearLayout>
+    <ImageButton style="@style/RoundedCornerButton"
+                 android:layout_width="115dp"
+                 android:layout_height="75dp"
+                 android:layout_gravity="center"
+                 android:layout_marginTop="20dp"
+                 android:onClick="showCarDialog"
+                 android:scaleType="centerInside"
+                 android:src="@drawable/car"/>
 
     <ProgressBar
         android:id="@+id/progressBar_MainActivity"

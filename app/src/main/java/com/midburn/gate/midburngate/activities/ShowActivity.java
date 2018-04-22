@@ -70,7 +70,7 @@ public class ShowActivity
 	public void exit(View view) {
 		boolean hasInternetConnection = AppUtils.isConnected(this);
 		if (!hasInternetConnection) {
-			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 		if (mTicket == null) {
@@ -104,7 +104,7 @@ public class ShowActivity
 	public void entrance(View view) {
 		boolean hasInternetConnection = AppUtils.isConnected(this);
 		if (!hasInternetConnection) {
-			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 		if (mTicket == null) {
@@ -127,7 +127,7 @@ public class ShowActivity
 
 		// no groups alert
 		if (groupsArrayList == null || groupsArrayList.size() == 0) {
-			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 
@@ -234,7 +234,7 @@ public class ShowActivity
 			               if (response == null) {
 				               Log.e(AppConsts.TAG, "response is null");
 				               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
-				               AppUtils.createAndShowDialog(ShowActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+				               AppUtils.createAndShowDialog(ShowActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 				               return;
 			               }
 			               try {
@@ -253,12 +253,12 @@ public class ShowActivity
 					               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
 					               JSONObject jsonObject = new JSONObject(responseBodyString);
 					               String errorMessage = (String) jsonObject.get("error");
-					               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", AppUtils.getErrorMessage(ShowActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", AppUtils.getErrorMessage(ShowActivity.this, errorMessage), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 				               }
 			               } catch (IOException | JSONException e) {
 				               Log.e(AppConsts.TAG, e.getMessage());
 				               AppUtils.playMusic(ShowActivity.this, AppConsts.ERROR_MUSIC);
-				               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+				               AppUtils.createAndShowDialog(ShowActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			               }
 		               });
 	}

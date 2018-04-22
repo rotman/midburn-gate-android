@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +20,7 @@ import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.dialogs.CarsDialog;
 import com.midburn.gate.midburngate.model.Group;
 import com.midburn.gate.midburngate.model.Ticket;
 import com.midburn.gate.midburngate.network.NetworkApi;
@@ -38,8 +38,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.Unit;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
+
+import static com.midburn.gate.midburngate.activities.SplashActivity.EVENTS_LIST;
 
 public class MainActivity
 		extends AppCompatActivity {
@@ -55,13 +58,7 @@ public class MainActivity
 
 	private String mGateCode;
 
-	public void enterVehicle(View view) {
-
-	}
-
-	public void exitVehicle(View view) {
-
-	}
+	private CarsDialog mCarsDialog;
 
 	public void manuallyInput(View view) {
 		final String invitationNumber = mInvitationNumberEditText.getText()
@@ -70,12 +67,12 @@ public class MainActivity
 		                                                 .toString();
 		if (TextUtils.isEmpty(invitationNumber) || TextUtils.isEmpty(ticketNumber)) {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.manually_validate_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.manually_validate_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 		boolean hasInternetConnection = AppUtils.isConnected(this);
 		if (!hasInternetConnection) {
-			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
 		}
 		mProgressBar.setVisibility(View.VISIBLE);
@@ -100,6 +97,46 @@ public class MainActivity
 		AppUtils.doPOSTHttpRequest(url, jsonObject.toString(), mHttpRequestListener);
 	}
 
+	public void showCarDialog(View view) {
+		mCarsDialog = new CarsDialog(this, v -> {
+			Log.d(AppConsts.TAG, "carEnter");
+			//TODO show progressbar
+			if (mCarsDialog != null) {
+				mCarsDialog.dismiss();
+			}
+			NetworkApi.INSTANCE.enterCar(this, mGateCode, new NetworkApi.Callback<Unit>() {
+				@Override
+				public void onSuccess(Unit response) {
+
+				}
+
+				@Override
+				public void onFailure(@NotNull Throwable throwable) {
+
+				}
+			});
+
+		}, v -> {
+			Log.d(AppConsts.TAG, "carExit");
+			//TODO show progressbar
+			if (mCarsDialog != null) {
+				mCarsDialog.dismiss();
+			}
+			NetworkApi.INSTANCE.exitCar(MainActivity.this, mGateCode, new NetworkApi.Callback<Unit>() {
+				@Override
+				public void onSuccess(Unit response) {
+
+				}
+
+				@Override
+				public void onFailure(@NotNull Throwable throwable) {
+
+				}
+			});
+		});
+		mCarsDialog.show();
+	}
+
 	private void handleServerResponse(final Response response) {
 		MainApplication.getsMainThreadHandler()
 		               .post(new Runnable() {
@@ -108,7 +145,7 @@ public class MainActivity
 				               if (response == null) {
 					               Log.e(AppConsts.TAG, "response is null");
 					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(MainActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               AppUtils.createAndShowDialog(MainActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 					               return;
 				               }
 
@@ -194,12 +231,12 @@ public class MainActivity
 							               Log.e(AppConsts.TAG, e.getMessage());
 							               errorMessage = (String) jsonObject.get("message");
 						               }
-						               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", AppUtils.getErrorMessage(MainActivity.this, errorMessage), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+						               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", AppUtils.getErrorMessage(MainActivity.this, errorMessage), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 					               }
 				               } catch (IOException | JSONException e) {
 					               Log.e(AppConsts.TAG, e.getMessage());
 					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, android.R.drawable.ic_dialog_alert);
+					               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 				               }
 			               }
 		               });
@@ -215,7 +252,7 @@ public class MainActivity
 		} catch (ActivityNotFoundException anfe) {
 			//on catch, show the download dialog
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
-			AppUtils.createAndShowDialog(this, "סורק לא נמצא", "להוריד אפליקציית סורק?", "כן", "לא", mNeedToDownloadScannerAppClickListener, android.R.drawable.ic_dialog_alert);
+			AppUtils.createAndShowDialog(this, "סורק לא נמצא", "להוריד אפליקציית סורק?", "כן", "לא", mNeedToDownloadScannerAppClickListener, null, android.R.drawable.ic_dialog_alert);
 		}
 	}
 
@@ -255,13 +292,15 @@ public class MainActivity
 		setContentView(R.layout.activity_main);
 		bindView();
 		setListeners();
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
-
-		if (TextUtils.isEmpty(mGateCode)) {
-			fetchNewEventCode();
-		}
 		checkForUpdates();
+
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		String gateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+
+		if (TextUtils.isEmpty(gateCode)) {
+			List<String> events = getIntent().getStringArrayListExtra(EVENTS_LIST);
+
+		}
 	}
 
 	@Override
@@ -301,9 +340,19 @@ public class MainActivity
 						editor.putString(getString(R.string.gate_code_key), "");
 						editor.apply();
 
-						fetchNewEventCode();
+						AppUtils.fetchNewEventsCode(MainActivity.this, new NetworkApi.Callback<List<String>>() {
+							@Override
+							public void onSuccess(List<String> response) {
+
+							}
+
+							@Override
+							public void onFailure(@NotNull Throwable throwable) {
+
+							}
+						});
 					}
-				}, android.R.drawable.ic_dialog_alert);
+				}, null, android.R.drawable.ic_dialog_alert);
 				return true;
 			default:
 				// If we got here, the user's action was not recognized.
@@ -311,29 +360,6 @@ public class MainActivity
 				return super.onOptionsItemSelected(item);
 
 		}
-	}
-
-	private void fetchNewEventCode() {
-		mProgressBar.setVisibility(View.VISIBLE);
-		NetworkApi.INSTANCE.getEvents(this, new NetworkApi.Callback<List<String>>() {
-			@Override
-			public void onFailure(@NotNull Throwable throwable) {
-
-			}
-
-			@Override
-			public void onSuccess(List<String> eventIds) {
-				CharSequence[] eventsList = eventIds.toArray(new CharSequence[eventIds.size()]);
-				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-				builder.setTitle("בחר אירוע");
-				builder.setItems(eventsList, (dialog, which) -> {
-					mGateCode = "fsdfsd";
-					mProgressBar.setVisibility(View.INVISIBLE);
-				});
-				builder.show();
-			}
-
-		});
 	}
 
 	private void setListeners() {
@@ -382,7 +408,7 @@ public class MainActivity
 
 	@Override
 	public void onBackPressed() {
-		AppUtils.createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, android.R.drawable.ic_dialog_alert);
+		AppUtils.createAndShowDialog(this, "האם ברצונך לצאת?", "", "כן", "לא", mBackPressedClickListener, null, android.R.drawable.ic_dialog_alert);
 	}
 
 

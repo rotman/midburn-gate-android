@@ -5,6 +5,9 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.midburn.gate.midburngate.R
+import com.midburn.gate.midburngate.network.GitHubService
+import com.midburn.gate.midburngate.network.NetworkApi
+import com.midburn.gate.midburngate.network.TestObj
 import kotlinx.android.synthetic.main.activity_sapak_test.*
 import retrofit2.Call
 import retrofit2.Callback

@@ -13,8 +13,10 @@ import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
+import com.midburn.gate.midburngate.network.NetworkApi;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -26,11 +28,11 @@ public class AppUtils {
 
 	private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-	public static void createAndShowDialog(final Context context, String title, String message, @Nullable String positiveButtonText, @Nullable String negativeButtonText, @Nullable DialogInterface.OnClickListener onClickListener, int iconId) {
+	public static void createAndShowDialog(final Context context, String title, String message, @Nullable String positiveButtonText, @Nullable String negativeButtonText, @Nullable DialogInterface.OnClickListener positiveOnClickListener, @Nullable DialogInterface.OnClickListener negativeClickListener, int iconId) {
 		new AlertDialog.Builder(context).setTitle(title)
 		                                .setMessage(message)
-		                                .setPositiveButton(positiveButtonText, onClickListener)
-		                                .setNegativeButton(negativeButtonText, null)
+		                                .setPositiveButton(positiveButtonText, positiveOnClickListener)
+		                                .setNegativeButton(negativeButtonText, negativeClickListener)
 		                                .setIcon(iconId)
 		                                .show();
 	}
@@ -98,6 +100,10 @@ public class AppUtils {
 			}
 		});
 		thread.start();
+	}
+
+	public static void fetchNewEventsCode(Context context, NetworkApi.Callback<List<String>> listCallback) {
+		NetworkApi.INSTANCE.getEvents(context, listCallback);
 	}
 
 	public static String getErrorMessage(Context context, String error) {
