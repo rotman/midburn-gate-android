@@ -20,7 +20,7 @@ public class MainApplication
 		sMainThreadHandler = new Handler();
 		//turn volume to max
 		AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+//		am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 	}
 
 	public static OkHttpClient getHttpClient() {

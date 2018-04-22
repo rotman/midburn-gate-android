@@ -1,8 +1,10 @@
 package com.midburn.gate.midburngate.utils;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -137,5 +139,22 @@ public class AppUtils {
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		progressDialog.setIndeterminate(true);
 		progressDialog.show();
+	}
+
+	public static void showEventsDialog(Context context, List<String> events) {
+		// show event selection dialog
+		CharSequence eventsArray[] = events.toArray(new CharSequence[events.size()]);
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("בחר אירוע");
+		builder.setItems(eventsArray, (dialog, which) -> {
+			Log.d(AppConsts.TAG, eventsArray[which] + " was clicked.");
+			String gateCode = eventsArray[which].toString();
+			//persist the event id
+			SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putString(context.getString(R.string.gate_code_key), gateCode);
+			editor.commit();
+		});
+		builder.show();
 	}
 }

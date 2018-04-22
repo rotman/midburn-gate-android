@@ -11,7 +11,7 @@
     <string name="ticket_owner_name">שם:</string>
     <string name="ticket_type">סוג הכרטיס:</string>
     <string name="entrance_date">תאריך כניסה:</string>
-    <string name="exit">בתוך האירוע</string>
+    <string name="exit">הוצא מהאירוע</string>
     <string name="entrance">הכנס לאירוע</string>
     <string name="gate_code">קוד שער:</string>
     <string name="insert_gate_code">הכנס קוד אירוע</string>

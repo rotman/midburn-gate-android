@@ -2,9 +2,7 @@ package com.midburn.gate.midburngate.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -92,7 +90,7 @@ public class ShowActivity
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("event_id", mGateCode);
 			jsonObject.put("barcode", barcode);
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
@@ -188,7 +186,7 @@ public class ShowActivity
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("barcode", barcode);
-			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("event_id", mGateCode);
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
@@ -208,7 +206,7 @@ public class ShowActivity
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("barcode", barcode);
-			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("event_id", mGateCode);
 			jsonObject.put("group_id", groupId);
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
@@ -297,9 +295,9 @@ public class ShowActivity
 		bindView();
 
 		//fetch gate code from shared prefs
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
-
+		mGateCode = getIntent().getStringExtra("event_id");
+		//		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		//		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 		mHttpRequestListener = new HttpRequestListener() {
 			@Override
 			public void onResponse(Response response) {
@@ -360,7 +358,6 @@ public class ShowActivity
 		if (mAction == Action.EXIT) {
 			mEntranceButton.setVisibility(View.GONE);
 			mExitButton.setVisibility(View.VISIBLE);
-			mExitButton.setClickable(false); // can't exist
 		}
 		else {
 			mExitButton.setVisibility(View.GONE);

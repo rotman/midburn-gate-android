@@ -1,9 +1,9 @@
 package com.midburn.gate.midburngate.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,7 +29,7 @@ public class SplashActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		String gateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
 
 		if (TextUtils.isEmpty(gateCode)) {

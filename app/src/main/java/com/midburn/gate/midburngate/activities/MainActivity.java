@@ -2,6 +2,7 @@ package com.midburn.gate.midburngate.activities;
 
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +61,22 @@ public class MainActivity
 	private CarsDialog     mCarsDialog;
 	private ProgressDialog mProgressDialog;
 
+	private NetworkApi.Callback<List<String>> mEventsCallback = new NetworkApi.Callback<List<String>>() {
+		@Override
+		public void onSuccess(List<String> response) {
+			mProgressDialog.dismiss();
+			if (response != null && response.size() > 0) {
+				AppUtils.showEventsDialog(MainActivity.this, response);
+			}
+		}
+
+		@Override
+		public void onFailure(@NotNull Throwable throwable) {
+			mProgressDialog.dismiss();
+			//TODO show error dialog
+		}
+	};
+
 	public void manuallyInput(View view) {
 		final String invitationNumber = mInvitationNumberEditText.getText()
 		                                                         .toString();
@@ -86,7 +103,7 @@ public class MainActivity
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("gate_code", mGateCode);
+			jsonObject.put("event_id", mGateCode);
 			jsonObject.put("ticket", ticketNumber);
 			jsonObject.put("order", invitationNumber);
 
@@ -218,6 +235,7 @@ public class MainActivity
 						               Log.d(AppConsts.TAG, ticket.toString());
 
 						               Intent intent = new Intent(MainActivity.this, ShowActivity.class);
+						               intent.putExtra("event_id", mGateCode);
 						               intent.putExtra("ticketDetails", ticket);
 						               startActivity(intent);
 					               }
@@ -275,7 +293,7 @@ public class MainActivity
 
 				JSONObject jsonObject = new JSONObject();
 				try {
-					jsonObject.put("gate_code", mGateCode);
+					jsonObject.put("event_id", mGateCode);
 					jsonObject.put("barcode", barcode);
 
 				} catch (JSONException e) {
@@ -295,12 +313,21 @@ public class MainActivity
 		setListeners();
 		checkForUpdates();
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		String gateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
-
-		if (TextUtils.isEmpty(gateCode)) {
+		//fetch gate code from shared prefs
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+		if (TextUtils.isEmpty(mGateCode)) {
 			List<String> events = getIntent().getStringArrayListExtra(EVENTS_LIST);
+			if (events == null || events.size() <= 0) {
+				AppUtils.showProgressDialog(mProgressDialog);
+				AppUtils.fetchNewEventsCode(this, mEventsCallback);
+				mGateCode = PreferenceManager.getDefaultSharedPreferences(this)
+				                             .getString(getString(R.string.gate_code_key), "");
 
+			}
+			else {
+				AppUtils.showEventsDialog(this, events);
+			}
 		}
 	}
 
@@ -336,22 +363,12 @@ public class MainActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						//clear event id from shared prefs
-						SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+						SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 						SharedPreferences.Editor editor = sharedPref.edit();
 						editor.putString(getString(R.string.gate_code_key), "");
-						editor.apply();
+						editor.commit();
 
-						AppUtils.fetchNewEventsCode(MainActivity.this, new NetworkApi.Callback<List<String>>() {
-							@Override
-							public void onSuccess(List<String> response) {
-
-							}
-
-							@Override
-							public void onFailure(@NotNull Throwable throwable) {
-
-							}
-						});
+						AppUtils.fetchNewEventsCode(MainActivity.this, mEventsCallback);
 					}
 				}, null, android.R.drawable.ic_dialog_alert);
 				return true;
