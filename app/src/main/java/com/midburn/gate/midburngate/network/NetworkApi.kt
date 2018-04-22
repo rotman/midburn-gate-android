@@ -1,7 +1,6 @@
 package com.midburn.gate.midburngate.network
 
 import android.content.Context
-
 import com.midburn.gate.midburngate.BuildConfig
 import com.midburn.gate.midburngate.consts.AppConsts
 import com.midburn.gate.midburngate.utils.AppUtils.isConnected
@@ -28,7 +27,26 @@ object NetworkApi {
     }
 
     fun getEvents(context: Context, callback: Callback<List<String>>) {
-        performCall(context, callback, networkCalls.getEventIds())
+        if (!isConnected(context)) {
+            callback.onFailure(Throwable("Not connected to a network"))
+
+        } else {
+            networkCalls.getEventIds().enqueue(object : retrofit2.Callback<Map<String, List<NetworkCalls.Event>>?> {
+                override fun onFailure(call: Call<Map<String, List<NetworkCalls.Event>>?>?, t: Throwable?) {
+                    callback.onFailure(t ?: Throwable("Network call failed"))
+                }
+
+                override fun onResponse(call: Call<Map<String, List<NetworkCalls.Event>>?>?, response: Response<Map<String, List<NetworkCalls.Event>>?>?) {
+                    val events = response?.body()?.get("events")
+                    if (events == null) {
+                        callback.onFailure(Throwable("Response does not contain a list of events"))
+                        return
+                    }
+                    callback.onSuccess(events.map { it.event_id }.toList())
+                }
+            })
+        }
+
     }
 
     fun getSapak(context: Context, contractorId: String, callback: Callback<Contractor>) {

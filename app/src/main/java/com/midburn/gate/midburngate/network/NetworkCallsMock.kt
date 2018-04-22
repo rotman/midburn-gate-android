@@ -36,8 +36,8 @@ class NetworkCallsMock(private val delegate: BehaviorDelegate<NetworkCalls>) : N
         return delegate.returningResponse(null).carsDecrement(eventId)
     }
 
-    override fun getEventIds(): Call<List<String>> {
-        return delegate.returningResponse(listOf("1231", "33333", "111111", "444444")).getEventIds()
+    override fun getEventIds(): Call<Map<String, List<NetworkCalls.Event>>> {
+        return delegate.returningResponse(mapOf("events" to listOf(NetworkCalls.Event("MIDBURN2017"), NetworkCalls.Event("MIDBURN2018")))).getEventIds()
     }
 
     override fun departContractorInternal(contractorId: String, body: NetworkCalls.DepartureInfo): Call<Contractor> {
