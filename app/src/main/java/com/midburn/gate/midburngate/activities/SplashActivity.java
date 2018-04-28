@@ -1,8 +1,6 @@
 package com.midburn.gate.midburngate.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -29,19 +27,25 @@ public class SplashActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
 
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		String gateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+		String gateCode = AppUtils.getEventId(this);
 
 		if (TextUtils.isEmpty(gateCode)) {
+			boolean hasInternetConnection = AppUtils.isConnected(this);
+			if (!hasInternetConnection) {
+				AppUtils.createAndShowDialog(this, getString(R.string.no_network_dialog_title), getString(R.string.no_network_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
+				return;
+			}
 			AppUtils.fetchNewEventsCode(this, new NetworkApi.Callback<List<String>>() {
 				@Override
 				public void onSuccess(List<String> response) {
 					if (response == null) {
-						onFailure(new Exception("response body is null"));
+						String errorMessage = "response body is null";
+						onFailure(new Exception(errorMessage));
 						return;
 					}
 					if (response.size() <= 0) {
-						onFailure(new Exception("events list is empty"));
+						String errorMessage = "events list is empty";
+						onFailure(new Exception(errorMessage));
 						return;
 					}
 					Intent intent = new Intent(SplashActivity.this, MainActivity.class);
@@ -53,7 +57,8 @@ public class SplashActivity
 				public void onFailure(@NotNull Throwable throwable) {
 					failureCounter++;
 					Log.e(AppConsts.TAG, throwable.getMessage() + " failureCounter: " + failureCounter);
-					//TODO show error dialog instaed of moving to main activity
+					AppUtils.createAndShowDialog(SplashActivity.this, "שגיאה", AppUtils.getErrorMessage(SplashActivity.this, throwable.getMessage()), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
+					finish();
 				}
 			});
 		}

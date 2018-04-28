@@ -294,10 +294,10 @@ public class ShowActivity
 		getSupportActionBar().setTitle(getString(R.string.ticket_details));
 		bindView();
 
-		//fetch gate code from shared prefs
 		mGateCode = getIntent().getStringExtra("event_id");
-		//		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		//		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+		if (TextUtils.isEmpty(mGateCode)) {
+			mGateCode = AppUtils.getEventId(this);
+		}
 		mHttpRequestListener = new HttpRequestListener() {
 			@Override
 			public void onResponse(Response response) {

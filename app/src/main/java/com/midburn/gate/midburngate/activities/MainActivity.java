@@ -2,13 +2,10 @@ package com.midburn.gate.midburngate.activities;
 
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
+import com.midburn.gate.midburngate.OperationFinishedListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
@@ -61,12 +59,20 @@ public class MainActivity
 	private CarsDialog     mCarsDialog;
 	private ProgressDialog mProgressDialog;
 
+	private OperationFinishedListener<String> mEventIdFetchedListener = new OperationFinishedListener<String>() {
+		@Override
+		public void onFinish(String result) {
+			mProgressDialog.dismiss();
+			mGateCode = result;
+		}
+	};
+
 	private NetworkApi.Callback<List<String>> mEventsCallback = new NetworkApi.Callback<List<String>>() {
 		@Override
 		public void onSuccess(List<String> response) {
 			mProgressDialog.dismiss();
 			if (response != null && response.size() > 0) {
-				AppUtils.showEventsDialog(MainActivity.this, response);
+				AppUtils.showEventsDialog(MainActivity.this, response, mEventIdFetchedListener);
 			}
 		}
 
@@ -126,11 +132,13 @@ public class MainActivity
 				@Override
 				public void onSuccess(Unit response) {
 					mProgressDialog.dismiss();
+					AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
 				}
 
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
 					mProgressDialog.dismiss();
+					AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
 				}
 			});
 
@@ -143,12 +151,14 @@ public class MainActivity
 			NetworkApi.INSTANCE.exitCar(MainActivity.this, mGateCode, new NetworkApi.Callback<Unit>() {
 				@Override
 				public void onSuccess(Unit response) {
-					mCarsDialog.dismiss();
+					mProgressDialog.dismiss();
+					AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
 				}
 
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
-					mCarsDialog.dismiss();
+					mProgressDialog.dismiss();
+					AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
 				}
 			});
 		});
@@ -314,19 +324,15 @@ public class MainActivity
 		checkForUpdates();
 
 		//fetch gate code from shared prefs
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		mGateCode = sharedPref.getString(getString(R.string.gate_code_key), "");
+		mGateCode = AppUtils.getEventId(this);
 		if (TextUtils.isEmpty(mGateCode)) {
 			List<String> events = getIntent().getStringArrayListExtra(EVENTS_LIST);
 			if (events == null || events.size() <= 0) {
 				AppUtils.showProgressDialog(mProgressDialog);
 				AppUtils.fetchNewEventsCode(this, mEventsCallback);
-				mGateCode = PreferenceManager.getDefaultSharedPreferences(this)
-				                             .getString(getString(R.string.gate_code_key), "");
-
 			}
 			else {
-				AppUtils.showEventsDialog(this, events);
+				AppUtils.showEventsDialog(this, events, mEventIdFetchedListener);
 			}
 		}
 	}
@@ -362,12 +368,7 @@ public class MainActivity
 				AppUtils.createAndShowDialog(this, "הכנס קוד אירוע חדש?", "פעולה זו תמחק את קוד האירוע הישן", "כן", "לא", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						//clear event id from shared prefs
-						SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-						SharedPreferences.Editor editor = sharedPref.edit();
-						editor.putString(getString(R.string.gate_code_key), "");
-						editor.commit();
-
+						AppUtils.persistEventId(MainActivity.this, "");
 						AppUtils.fetchNewEventsCode(MainActivity.this, mEventsCallback);
 					}
 				}, null, android.R.drawable.ic_dialog_alert);

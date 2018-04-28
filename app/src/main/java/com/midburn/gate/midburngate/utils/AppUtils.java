@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
+import com.midburn.gate.midburngate.OperationFinishedListener;
 import com.midburn.gate.midburngate.R;
 import com.midburn.gate.midburngate.application.MainApplication;
 import com.midburn.gate.midburngate.consts.AppConsts;
@@ -141,20 +142,30 @@ public class AppUtils {
 		progressDialog.show();
 	}
 
-	public static void showEventsDialog(Context context, List<String> events) {
+	public static void showEventsDialog(Context context, List<String> events, OperationFinishedListener<String> stringOperationFinishedListener) {
 		// show event selection dialog
 		CharSequence eventsArray[] = events.toArray(new CharSequence[events.size()]);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("בחר אירוע");
 		builder.setItems(eventsArray, (dialog, which) -> {
-			Log.d(AppConsts.TAG, eventsArray[which] + " was clicked.");
-			String gateCode = eventsArray[which].toString();
-			//persist the event id
-			SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putString(context.getString(R.string.gate_code_key), gateCode);
-			editor.commit();
+			String eventId = eventsArray[which].toString();
+			Log.d(AppConsts.TAG, eventId + " was clicked.");
+			persistEventId(context, eventId);
+			stringOperationFinishedListener.onFinish(eventId);
+
 		});
 		builder.show();
+	}
+
+	public static void persistEventId(Context context, String eventId) {
+		SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putString(context.getString(R.string.gate_code_key), eventId);
+		editor.commit();
+	}
+
+	public static String getEventId(Context context) {
+		SharedPreferences sharedPref = ((Activity) context).getPreferences(Context.MODE_PRIVATE);
+		return sharedPref.getString(context.getString(R.string.gate_code_key), "");
 	}
 }
