@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.midburn.gate.midburngate.HttpRequestListener;
 import com.midburn.gate.midburngate.OperationFinishedListener;
@@ -58,12 +59,14 @@ public class MainActivity
 
 	private CarsDialog     mCarsDialog;
 	private ProgressDialog mProgressDialog;
+	private TextView       mEventIdTextView;
 
 	private OperationFinishedListener<String> mEventIdFetchedListener = new OperationFinishedListener<String>() {
 		@Override
 		public void onFinish(String result) {
 			mProgressDialog.dismiss();
 			mGateCode = result;
+			onEventIdChanged();
 		}
 	};
 
@@ -335,6 +338,16 @@ public class MainActivity
 				AppUtils.showEventsDialog(this, events, mEventIdFetchedListener);
 			}
 		}
+		onEventIdChanged();
+	}
+
+	private void onEventIdChanged() {
+		if (TextUtils.isEmpty(mGateCode)) {
+			mEventIdTextView.setText("חסר קוד אירוע");
+		}
+		else {
+			mEventIdTextView.setText(mGateCode);
+		}
 	}
 
 	@Override
@@ -422,6 +435,7 @@ public class MainActivity
 		mInvitationNumberEditText = findViewById(R.id.invitationNumberEditText_MainActivity);
 		mTicketNumberEditText = findViewById(R.id.ticketNumberEditText_MainActivity);
 		mProgressDialog = new ProgressDialog(this);
+		mEventIdTextView = findViewById(R.id.eventId_TextView_MainActivity);
 	}
 
 
