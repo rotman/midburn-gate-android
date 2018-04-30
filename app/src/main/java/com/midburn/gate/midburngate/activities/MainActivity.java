@@ -47,8 +47,8 @@ import static com.midburn.gate.midburngate.activities.SplashActivity.EVENTS_LIST
 public class MainActivity
 		extends AppCompatActivity {
 
-	private EditText    mInvitationNumberEditText;
-	private EditText    mTicketNumberEditText;
+	private EditText mInvitationNumberEditText;
+	private EditText mTicketNumberEditText;
 
 	private DialogInterface.OnClickListener mNeedToDownloadScannerAppClickListener;
 	private DialogInterface.OnClickListener mBackPressedClickListener;
@@ -87,10 +87,8 @@ public class MainActivity
 	};
 
 	public void manuallyInput(View view) {
-		final String invitationNumber = mInvitationNumberEditText.getText()
-		                                                         .toString();
-		final String ticketNumber = mTicketNumberEditText.getText()
-		                                                 .toString();
+		final String invitationNumber = mInvitationNumberEditText.getText().toString();
+		final String ticketNumber = mTicketNumberEditText.getText().toString();
 		if (TextUtils.isEmpty(invitationNumber) || TextUtils.isEmpty(ticketNumber)) {
 			AppUtils.playMusic(this, AppConsts.ERROR_MUSIC);
 			AppUtils.createAndShowDialog(this, getString(R.string.manually_validate_dialog_title), getString(R.string.manually_validate_dialog_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
@@ -140,6 +138,7 @@ public class MainActivity
 
 				@Override
 				public void onFailure(@NotNull Throwable throwable) {
+					Log.w(AppConsts.TAG, throwable.getMessage());
 					mProgressDialog.dismiss();
 					AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
 				}
@@ -169,109 +168,108 @@ public class MainActivity
 	}
 
 	private void handleServerResponse(final Response response) {
-		MainApplication.getsMainThreadHandler()
-		               .post(new Runnable() {
-			               @Override
-			               public void run() {
-				               if (response == null) {
-					               Log.e(AppConsts.TAG, "response is null");
-					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(MainActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
-					               return;
-				               }
+		MainApplication.getsMainThreadHandler().post(new Runnable() {
+			@Override
+			public void run() {
+				if (response == null) {
+					Log.e(AppConsts.TAG, "response is null");
+					AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+					AppUtils.createAndShowDialog(MainActivity.this, "פעולה נכשלה", null, getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
+					return;
+				}
 
-				               try {
-					               String responseBodyString = response.body()
-					                                                   .string();
-					               Log.d(AppConsts.TAG, "response.body():" + responseBodyString);
-					               if (response.code() == AppConsts.RESPONSE_OK) {
-						               AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
+				try {
+					String responseBodyString = response.body().string();
+					Log.d(AppConsts.TAG, "response.body():" + responseBodyString);
+					if (response.code() == AppConsts.RESPONSE_OK) {
+						AppUtils.playMusic(MainActivity.this, AppConsts.OK_MUSIC);
 
-						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
+						JSONObject jsonObject = new JSONObject(responseBodyString);
+						JSONObject ticketJsonObject = (JSONObject) jsonObject.get("ticket");
 
-						               Ticket ticket = new Ticket();
-						               //bullet proof null properties
-						               if (!jsonObject.isNull("gate_status")) {
-							               ticket.setGateStatus((String) jsonObject.get("gate_status"));
-						               }
+						Ticket ticket = new Ticket();
+						//bullet proof null properties
+						if (!jsonObject.isNull("gate_status")) {
+							ticket.setGateStatus((String) jsonObject.get("gate_status"));
+						}
 
-						               if (!ticketJsonObject.isNull("barcode")) {
-							               ticket.setBarCode((String) ticketJsonObject.get("barcode"));
-						               }
-						               else {
-							               Log.e(AppConsts.TAG, "returned barcode is null. can't continue!!!");
-						               }
-						               if (!ticketJsonObject.isNull("ticket_number")) {
-							               ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
-						               }
-						               if (!ticketJsonObject.isNull("order_id")) {
-							               ticket.setInvitationNumber((int) ticketJsonObject.get("order_id"));
-						               }
-						               if (!ticketJsonObject.isNull("holder_name")) {
-							               ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
-						               }
-						               if (!ticketJsonObject.isNull("type")) {
-							               ticket.setTicketType((String) ticketJsonObject.get("type"));
-						               }
-						               if (!ticketJsonObject.isNull("inside_event")) {
-							               ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
-						               }
-						               if (!ticketJsonObject.isNull("israeli_id")) {
-							               ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
-						               }
-						               if (!ticketJsonObject.isNull("disabled_parking")) {
-							               ticket.setIsDisabled((int) ticketJsonObject.get("disabled_parking"));
-						               }
-						               if (!ticketJsonObject.isNull("entrance_group_id")) {
-							               ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
-						               }
-						               if (!ticketJsonObject.isNull("groups")) {
-							               JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
-							               ArrayList<Group> groups = new ArrayList<>();
-							               for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
-								               JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
-								               Group newGroup = new Group();
-								               if (!groupJsonObject.isNull("id") && !groupJsonObject.isNull("name") && !groupJsonObject.isNull("type")) {
-									               newGroup.setId((int) groupJsonObject.get("id"));
-									               newGroup.setName((String) groupJsonObject.get("name"));
-									               newGroup.setType((String) groupJsonObject.get("type"));
-									               groups.add(newGroup);
-								               }
-								               else {
-									               Log.e(AppConsts.TAG, "one of the group's fields is null");
-								               }
-							               }
-							               ticket.setGroups(groups);
-						               }
+						if (!ticketJsonObject.isNull("barcode")) {
+							ticket.setBarCode((String) ticketJsonObject.get("barcode"));
+						}
+						else {
+							Log.e(AppConsts.TAG, "returned barcode is null. can't continue!!!");
+						}
+						if (!ticketJsonObject.isNull("ticket_number")) {
+							ticket.setTicketNumber((int) ticketJsonObject.get("ticket_number"));
+						}
+						if (!ticketJsonObject.isNull("order_id")) {
+							ticket.setInvitationNumber((int) ticketJsonObject.get("order_id"));
+						}
+						if (!ticketJsonObject.isNull("holder_name")) {
+							ticket.setTicketOwnerName((String) ticketJsonObject.get("holder_name"));
+						}
+						if (!ticketJsonObject.isNull("type")) {
+							ticket.setTicketType((String) ticketJsonObject.get("type"));
+						}
+						if (!ticketJsonObject.isNull("inside_event")) {
+							ticket.setInsideEvent((int) ticketJsonObject.get("inside_event"));
+						}
+						if (!ticketJsonObject.isNull("israeli_id")) {
+							ticket.setTicketOwnerId((String) ticketJsonObject.get("israeli_id"));
+						}
+						if (!ticketJsonObject.isNull("disabled_parking")) {
+							ticket.setIsDisabled((int) ticketJsonObject.get("disabled_parking"));
+						}
+						if (!ticketJsonObject.isNull("entrance_group_id")) {
+							ticket.setEntranceGroupId((int) ticketJsonObject.get("entrance_group_id"));
+						}
+						if (!ticketJsonObject.isNull("groups")) {
+							JSONArray groupsJsonArray = ticketJsonObject.getJSONArray("groups");
+							ArrayList<Group> groups = new ArrayList<>();
+							for (int i = 0 ; i < groupsJsonArray.length() ; i++) {
+								JSONObject groupJsonObject = groupsJsonArray.getJSONObject(i);
+								Group newGroup = new Group();
+								if (!groupJsonObject.isNull("id") && !groupJsonObject.isNull("name") && !groupJsonObject
+										.isNull("type")) {
+									newGroup.setId((int) groupJsonObject.get("id"));
+									newGroup.setName((String) groupJsonObject.get("name"));
+									newGroup.setType((String) groupJsonObject.get("type"));
+									groups.add(newGroup);
+								}
+								else {
+									Log.e(AppConsts.TAG, "one of the group's fields is null");
+								}
+							}
+							ticket.setGroups(groups);
+						}
 
-						               Log.d(AppConsts.TAG, ticket.toString());
+						Log.d(AppConsts.TAG, ticket.toString());
 
-						               Intent intent = new Intent(MainActivity.this, ShowActivity.class);
-						               intent.putExtra("event_id", mGateCode);
-						               intent.putExtra("ticketDetails", ticket);
-						               startActivity(intent);
-					               }
-					               else {
-						               Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
-						               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
-						               JSONObject jsonObject = new JSONObject(responseBodyString);
-						               String errorMessage;
-						               try {
-							               errorMessage = (String) jsonObject.get("error");
-						               } catch (ClassCastException e) {
-							               Log.e(AppConsts.TAG, e.getMessage());
-							               errorMessage = (String) jsonObject.get("message");
-						               }
-						               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", AppUtils.getErrorMessage(MainActivity.this, errorMessage), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
-					               }
-				               } catch (IOException | JSONException e) {
-					               Log.e(AppConsts.TAG, e.getMessage());
-					               AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
-					               AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
-				               }
-			               }
-		               });
+						Intent intent = new Intent(MainActivity.this, ShowActivity.class);
+						intent.putExtra("event_id", mGateCode);
+						intent.putExtra("ticketDetails", ticket);
+						startActivity(intent);
+					}
+					else {
+						Log.e(AppConsts.TAG, "response code: " + response.code() + " | response body: " + responseBodyString);
+						AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+						JSONObject jsonObject = new JSONObject(responseBodyString);
+						String errorMessage;
+						try {
+							errorMessage = (String) jsonObject.get("error");
+						} catch (ClassCastException e) {
+							Log.e(AppConsts.TAG, e.getMessage());
+							errorMessage = (String) jsonObject.get("message");
+						}
+						AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", AppUtils.getErrorMessage(MainActivity.this, errorMessage), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
+					}
+				} catch (IOException | JSONException e) {
+					Log.e(AppConsts.TAG, e.getMessage());
+					AppUtils.playMusic(MainActivity.this, AppConsts.ERROR_MUSIC);
+					AppUtils.createAndShowDialog(MainActivity.this, "שגיאה", e.getMessage(), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
+				}
+			}
+		});
 	}
 
 	public void scanQR(View view) {
@@ -337,6 +335,9 @@ public class MainActivity
 			else {
 				AppUtils.showEventsDialog(this, events, mEventIdFetchedListener);
 			}
+		}
+		if (TextUtils.isEmpty(mGateCode)) {
+			Log.e(AppConsts.TAG, "Gate code is empty!");
 		}
 		onEventIdChanged();
 	}

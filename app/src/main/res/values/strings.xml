@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Midburn Gate</string>
-    <string name="invitation_number">מספר הזמנה:</string>
+    <string name="invitation_number">מספר הזמנה</string>
     <string name="ticket_number">מספר כרטיס:</string>
     <string name="send">שלח</string>
     <string name="manually_validate_dialog_title">חסר זיהוי</string>

@@ -2,6 +2,7 @@
 <LinearLayout
     android:id="@+id/activity_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,91 +13,85 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.midburn.gate.midburngate.activities.MainActivity">
 
-    <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+    <Button
+        style="@style/Base.Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="scanQR"
+        android:text="@string/scan_barcode"
+        android:textAppearance="?android:attr/textAppearanceLargeInverse"/>
 
-        <Button style="@style/RoundedCornerButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:onClick="scanQR"
-                android:paddingEnd="30dip"
-                android:scaleType="centerCrop"
-                android:text="@string/scan_barcode"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"/>
 
-        <ImageView android:layout_width="40dp"
-                   android:layout_height="40dp"
-                   android:layout_centerVertical="true"
-                   android:layout_marginStart="210dp"
-                   android:src="@drawable/scan"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:text="@string/insert_manually"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"/>
 
-    </RelativeLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintTextAppearance="?android:attr/textAppearanceLarge">
 
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/border"/>
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="30dp"
-              android:text="@string/insert_manually"
-              android:textAppearance="?android:attr/textAppearanceLarge"
-              android:textStyle="bold"/>
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:text="@string/invitation_number"
-              android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <EditText android:id="@+id/invitationNumberEditText_MainActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:textAppearance="?android:attr/textAppearanceLarge"
-              android:inputType="phone"/>
-
-
-    <TextView android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end"
-              android:text="@string/ticket_number"
-              android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <EditText android:id="@+id/ticketNumberEditText_MainActivity"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textAppearance="?android:attr/textAppearanceLarge"
-              android:layout_marginBottom="20dp"
-              android:inputType="phone"/>
-
-    <Button android:layout_width="match_parent"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/invitationNumberEditText_MainActivity"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            style="@style/RoundedCornerButton"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:onClick="manuallyInput"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/send"/>
+            android:layout_gravity="end"
+            android:hint="@string/invitation_number"
+            android:inputType="phone"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintTextAppearance="?android:attr/textAppearanceLarge">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/ticketNumberEditText_MainActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:hint="@string/ticket_number"
+            android:inputType="phone"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="manuallyInput"
+        android:text="@string/send"
+        android:textAppearance="?android:attr/textAppearanceLargeInverse"/>
 
 
-    <ImageButton style="@style/RoundedCornerButton"
-                 android:layout_width="115dp"
-                 android:layout_height="75dp"
-                 android:layout_gravity="center"
-                 android:layout_marginTop="20dp"
-                 android:layout_marginBottom="15dp"
-                 android:onClick="showCarDialog"
-                 android:scaleType="centerInside"
-                 android:src="@drawable/car"/>
+    <ImageButton
+        android:layout_width="115dp"
+        android:layout_height="75dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="20dp"
+        android:onClick="showCarDialog"
+        android:scaleType="centerInside"
+        android:src="@drawable/car"/>
 
-    <TextView android:id="@+id/eventId_TextView_MainActivity"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginEnd="100dp"/>
+    <TextView
+        android:id="@+id/eventId_TextView_MainActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"/>
 
 
 </LinearLayout>
