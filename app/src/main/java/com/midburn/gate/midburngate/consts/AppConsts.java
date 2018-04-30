@@ -4,7 +4,8 @@ public class AppConsts {
 
 	public static final String TAG = "MIDBURN_GATE";
 
-	public static final String SERVER_URL         = "spark.staging.midburn.org";
+	public static final String SERVER_URL         = "spark.midburn.org";
+	public static final String FULL_SERVER_URL    = "https://spark.midburn.org";
 	public static final String SERVER_STAGING_URL = "https://spark.staging.midburn.org";
 
 	public static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";

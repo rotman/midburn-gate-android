@@ -108,7 +108,7 @@ object NetworkApi {
     }
 
     private fun getRetrofit(): Retrofit = Retrofit.Builder()
-            .baseUrl(AppConsts.SERVER_STAGING_URL)
+            .baseUrl(AppConsts.FULL_SERVER_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
