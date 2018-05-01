@@ -4,6 +4,14 @@ apply plugin: 'kotlin-android'
 
 ext.retrofit_version = '2.4.0'
 android {
+    signingConfigs {
+        config {
+            keyAlias 'mid_gate'
+            keyPassword 'midGate12!@'
+            storeFile file('/home/alex/AndroidStudioProjects/midburn-gate-android/midburn_keystore.jks')
+            storePassword 'midburn12!@'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.midburn.gate.midburngate"
@@ -12,8 +20,8 @@ android {
         versionCode 8
         versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "b0a720d0c07143bd9aa02b6b2461273a"]
+        signingConfig signingConfigs.config
     }
     buildTypes {
         debug {
@@ -21,8 +29,8 @@ android {
         }
         release {
             buildConfigField "boolean", "USE_MOCK", 'Boolean.parseBoolean("false")'
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -45,7 +53,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation "com.android.support:recyclerview-v7:$support_version"
-
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

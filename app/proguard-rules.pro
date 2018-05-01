@@ -16,17 +16,23 @@
 #   public *;
 #}
 
-# Okio
--keep class sun.misc.Unsafe { *; }
--dontwarn java.nio.file.*
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+######### Okio #########
+-dontwarn okhttp3.**
 -dontwarn okio.**
-#retrofit
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+####### retrofit ########
+# Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontnote retrofit2.Platform
+# Platform used when running on Java 8 VMs. Will not be used at runtime.
+-dontwarn retrofit2.Platform$Java8
 # Retain generic type information for use by reflection by converters and adapters.
 -keepattributes Signature
-# Retain service method parameters.
--keepclassmembernames,allowobfuscation interface * {
-    @retrofit2.http.* <methods>;
+# Retain declared checked exceptions for use by a Proxy instance.
+-keepattributes Exceptions
+##### HockeyApp
+-keepclassmembers class net.hockeyapp.android.UpdateFragment {
+  *;
 }
-# Ignore annotation used for build tooling.
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
