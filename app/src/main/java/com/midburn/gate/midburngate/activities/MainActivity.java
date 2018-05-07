@@ -242,6 +242,10 @@ public class MainActivity
 							}
 							ticket.setGroups(groups);
 						}
+						final String productionEarlyArrival = "production_early_arrival";
+						if (!ticketJsonObject.isNull(productionEarlyArrival)) {
+							ticket.isProductionEarlyArrival = ticketJsonObject.getBoolean("production_early_arrival");
+						}
 
 						Log.d(AppConsts.TAG, ticket.toString());
 

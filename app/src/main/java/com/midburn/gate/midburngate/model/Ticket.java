@@ -8,7 +8,7 @@ public class Ticket
 		implements Serializable {
 
 	private String           mBarCode;
-	private int          	 mInvitationNumber;
+	private int              mInvitationNumber;
 	private int              mTicketNumber;
 	private String           mTicketOwnerName;
 	private String           mTicketType;
@@ -19,8 +19,10 @@ public class Ticket
 	private int              mEntranceGroupId;
 	private String           mTicketOwnerId;
 	private int              mIsDisabled;
-	private String			 mGateStatus;
+	private String           mGateStatus;
 	private ArrayList<Group> mGroups;
+
+	public boolean isProductionEarlyArrival;
 
 	public Ticket(int invitationNumber, int ticketNumber, String ticketOwnerName, String ticketType, Date entranceDate) {
 		this.mInvitationNumber = invitationNumber;
@@ -156,21 +158,6 @@ public class Ticket
 
 	@Override
 	public String toString() {
-		return "Ticket{" +
-				"mGateStatus='" + mGateStatus + '\'' +
-				", mBarCode='" + mBarCode + '\'' +
-				", mInvitationNumber='" + mInvitationNumber + '\'' +
-				", mTicketNumber=" + mTicketNumber +
-				", mTicketOwnerName='" + mTicketOwnerName + '\'' +
-				", mTicketType='" + mTicketType + '\'' +
-				", mEntranceDate=" + mEntranceDate +
-				", mFirstEntranceDate=" + mFirstEntranceDate +
-				", mLastExitDate=" + mLastExitDate +
-				", mIsInsideEvent=" + mIsInsideEvent +
-				", mEntranceGroupId=" + mEntranceGroupId +
-				", mTicketOwnerId='" + mTicketOwnerId + '\'' +
-				", mIsDisabled=" + mIsDisabled +
-				", mGroups=" + mGroups +
-				'}';
+		return "Ticket{" + "mGateStatus='" + mGateStatus + '\'' + ", mBarCode='" + mBarCode + '\'' + ", mInvitationNumber='" + mInvitationNumber + '\'' + ", mTicketNumber=" + mTicketNumber + ", mTicketOwnerName='" + mTicketOwnerName + '\'' + ", mTicketType='" + mTicketType + '\'' + ", mEntranceDate=" + mEntranceDate + ", mFirstEntranceDate=" + mFirstEntranceDate + ", mLastExitDate=" + mLastExitDate + ", mIsInsideEvent=" + mIsInsideEvent + ", mEntranceGroupId=" + mEntranceGroupId + ", mTicketOwnerId='" + mTicketOwnerId + '\'' + ", mIsDisabled=" + mIsDisabled + ", mGroups=" + mGroups + '}';
 	}
 }

@@ -34,6 +34,7 @@ import okhttp3.Response;
 public class ShowActivity
 		extends AppCompatActivity {
 
+	private static final int PRODUCTION_EARLY_ARRIVAL_WORKAROUND = -1;
 	private TextView     mTicketOrderNumberTextView;
 	private TextView     mTicketNumberTextView;
 	private TextView     mTicketOwnerNameTextView;
@@ -123,19 +124,16 @@ public class ShowActivity
 	private void handleGroupTypes() {
 		final ArrayList<Group> groupsArrayList = mTicket.getGroups();
 
+		//check if group type is production. if so, select it immediately
+		if (mTicket.isProductionEarlyArrival) {
+			sendEntranceRequest(PRODUCTION_EARLY_ARRIVAL_WORKAROUND);
+			return;
+		}
+
 		// no groups alert
 		if (groupsArrayList == null || groupsArrayList.size() == 0) {
 			AppUtils.createAndShowDialog(this, "שגיאה", getString(R.string.no_early_arrival_message), getString(R.string.ok), null, null, null, android.R.drawable.ic_dialog_alert);
 			return;
-		}
-
-		//check if group type is production. if so, select it immediately
-		for (Group group : groupsArrayList) {
-			if (TextUtils.equals(group.getType(), AppConsts.GROUP_TYPE_PRODUCTION)) {
-				mSelectedGroup = group;
-				sendEntranceRequest(group.getId());
-				return;
-			}
 		}
 
 		// show group selection dialog
@@ -207,7 +205,10 @@ public class ShowActivity
 		try {
 			jsonObject.put("barcode", barcode);
 			jsonObject.put("event_id", mGateCode);
-			jsonObject.put("group_id", groupId);
+			// TODO(alex): 5/7/18 this is a workaround -1 means this is a production early arrival. server will validate that if no group is present
+			if (groupId != PRODUCTION_EARLY_ARRIVAL_WORKAROUND) {
+				jsonObject.put("group_id", groupId);
+			}
 		} catch (JSONException e) {
 			Log.e(AppConsts.TAG, e.getMessage());
 		}
@@ -267,7 +268,8 @@ public class ShowActivity
 		if (mAction == Action.ENTER) {
 			message = mTicket.getTicketOwnerName() + " נכנס/ה בהצלחה לאירוע.";
 			if (mState == State.ERALY_ENTRANCE) {
-				message += "\n" + "הקצאה לכניסה מוקדמת - " + mSelectedGroup.getName();
+				message += "\n" + "הקצאה לכניסה מוקדמת - " + (mSelectedGroup != null ? mSelectedGroup
+						.getName() : "הפקה");
 			}
 		} else {
 			message = mTicket.getTicketOwnerName() + " יצא/ה בהצלחה מהאירוע.";
@@ -321,6 +323,10 @@ public class ShowActivity
 			mTicketTypeTextView.setText(ticket.getTicketType());
 			mTicketOwnerIdTextView.setText(ticket.getTicketOwnerId());
 
+			if (mTicket.isProductionEarlyArrival) {
+				findViewById(R.id.earlyArrivalProductionTV).setVisibility(View.VISIBLE);
+			}
+
 			//decide which button to show (entrance/exit)
 			if (ticket.isInsideEvent() == 0) {
 				//the user is outside the event
@@ -366,16 +372,16 @@ public class ShowActivity
 	}
 
 	private void bindView() {
-		mTicketOrderNumberTextView = (TextView) findViewById(R.id.orderNumberTextView_ShowActivity);
-		mTicketNumberTextView = (TextView) findViewById(R.id.ticketNumberTextView_ShowActivity);
-		mTicketOwnerNameTextView = (TextView) findViewById(R.id.ticketOwnerTextView_ShowActivity);
-		mTicketTypeTextView = (TextView) findViewById(R.id.ticketTypeTextView_ShowActivity);
-		mEntranceButton = (Button) findViewById(R.id.entranceButton_ShowActivity);
-		mExitButton = (Button) findViewById(R.id.exitButton_ShowActivity);
-		mCancelButton = (Button) findViewById(R.id.cancelButton_ShowActivity);
-		mProgressBar = (ProgressBar) findViewById(R.id.progressBar_ShowActivity);
-		mTicketOwnerIdTextView = (TextView) findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
-		mDisabledLayout = (LinearLayout) findViewById(R.id.disabledLayout_ShowActivity);
+		mTicketOrderNumberTextView = findViewById(R.id.orderNumberTextView_ShowActivity);
+		mTicketNumberTextView = findViewById(R.id.ticketNumberTextView_ShowActivity);
+		mTicketOwnerNameTextView = findViewById(R.id.ticketOwnerTextView_ShowActivity);
+		mTicketTypeTextView = findViewById(R.id.ticketTypeTextView_ShowActivity);
+		mEntranceButton = findViewById(R.id.entranceButton_ShowActivity);
+		mExitButton = findViewById(R.id.exitButton_ShowActivity);
+		mCancelButton = findViewById(R.id.cancelButton_ShowActivity);
+		mProgressBar = findViewById(R.id.progressBar_ShowActivity);
+		mTicketOwnerIdTextView = findViewById(R.id.ticketOwnerIdTextView_ShowActivity);
+		mDisabledLayout = findViewById(R.id.disabledLayout_ShowActivity);
 	}
 
 	@Override
